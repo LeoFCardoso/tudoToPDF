@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!-- Commons configuration config file. Please adjust to your env -->
+<configuration>
+	<system />
+	<properties
+		fileName="/home/leonardo/Documents/workspace-eclipse/tudoToPDF/tudoToPDF.properties"
+		config-optional="true" />
+	<properties fileName="/opt/leo/tudoToPDF.properties"
+		config-optional="true" />
+</configuration>
