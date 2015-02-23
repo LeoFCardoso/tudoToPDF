@@ -134,9 +134,8 @@ public class ConvertFileServlet extends HttpServlet {
 				|| !StringUtils.isNumeric(request.getParameter("transparency")) ? 50 : Integer.parseInt(request
 				.getParameter("transparency"));
 		log.debug("Transparency: " + transparency);
-		
-		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? "" : request
-				.getParameter("strategy");
+
+		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? "" : request.getParameter("strategy");
 		log.debug("Conversion strategy: " + strategy);
 
 		PDFConverter converter = PDFConverterFactory.createPDFConverter(realContentType, strategy);
@@ -157,14 +156,12 @@ public class ConvertFileServlet extends HttpServlet {
 
 		// We already have a PDF. Post process it.
 		try {
-			if (isWatermarked || isProtected) {
-				ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader,
-						textTop, textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom,
-						sizeFooter, transparency, waterkMarkType);
+			ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader,
+					textTop, textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom,
+					sizeFooter, transparency, waterkMarkType);
 
-				pdfIS = PDFPostProcess.process(pdfIS, config);
-				log.debug("PDF post processed");
-			}
+			pdfIS = PDFPostProcess.process(pdfIS, config);
+			log.debug("PDF post processed");
 		} catch (PDFConverterException e) {
 			log.error(e.getMessage(), e);
 			showError(response, e.getMessage());

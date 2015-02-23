@@ -217,6 +217,14 @@ public class PDFPostProcess {
 				doc.protect(spp);
 			}
 
+			// Add tudoToPDF "signature"
+			// String creator = doc.getDocumentInformation().getCreator() == null ? "" :
+			// doc.getDocumentInformation().getCreator();
+			String producer = doc.getDocumentInformation().getProducer() == null ? "" : doc.getDocumentInformation()
+					.getProducer();
+			// doc.getDocumentInformation().setCreator(creator + " - tudoToPDF");
+			doc.getDocumentInformation().setProducer(producer + " - tudoToPDF");
+
 			ByteArrayOutputStream postProcessStream = new ByteArrayOutputStream();
 			doc.save(postProcessStream);
 			doc.close();
