@@ -1,6 +1,7 @@
 package br.nom.leonardo.tudotopdf.config;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -40,6 +41,10 @@ public class Config {
 			result[i] = Integer.parseInt(value);
 		}
 		return result;
+	}
+
+	public static Iterator<String> getKeys(String prefix) {
+		return config.getKeys(prefix);
 	}
 	
 	static {

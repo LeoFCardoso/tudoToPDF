@@ -1,3 +1,5 @@
+<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="br.nom.leonardo.tudotopdf.pdf.JODConverter"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -29,7 +31,7 @@
 		<p>
 			strategy: <select name="strategy" size="1">
 				<option selected="selected" value="Docx4J">Docx4J (newest Office formats - OpenXML)</option>
-				<option value="JOD">JOD (all Office and OO/LibreO formats)</option>
+				<option value="JOD">JOD (<%=StringUtils.join(JODConverter.supportedExtensions(), ',')%>)</option>
 				<option value="XDocReport">XDocReport (DOCX only)</option>
 				<option value="OfficeToPDF">OfficeToPDF (all Office formats)</option>
 				<option value="AsposeWords">Aspose Words Commercial (all text formats)</option>

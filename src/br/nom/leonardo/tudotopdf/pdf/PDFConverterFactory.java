@@ -1,6 +1,11 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import br.nom.leonardo.tudotopdf.config.Config;
 
 /**
  * Factory class to create PDFConverter instances
@@ -23,8 +28,6 @@ public class PDFConverterFactory {
 	private static final String PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
 	private static final String ODT = "application/vnd.oasis.opendocument.text";
-	private static final String ODS = "application/vnd.oasis.opendocument.spreadsheet";
-	private static final String ODP = "application/vnd.oasis.opendocument.presentation";
 
 	/**
 	 * @param contentType
@@ -45,7 +48,7 @@ public class PDFConverterFactory {
 		}
 
 		if ("JOD".equals(strategy)
-				&& Arrays.asList(new String[] { DOC, XLS, PPT, RTF, TXT, DOCX, PPTX, XLSX, ODT, ODS, ODP }).contains(contentType)) {
+				&& JODConverter.isContentSupported(contentType)) {
 			return new JODConverter();
 		}
 
@@ -68,4 +71,22 @@ public class PDFConverterFactory {
 
 		return null;
 	}
+	
+	/**
+	 * @return the supported extensions from a list of supported mimes (read configuration file)
+	 */
+	static List<String> supportedExtensions(List<String> supportedMimes) {
+		final String prefixMime = "mime.";
+		Iterator<String> allExt = Config.getKeys(prefixMime);
+		List<String> out = new ArrayList<String>();
+		while (allExt.hasNext()) {
+			String extension = allExt.next();
+			if (supportedMimes.contains(Config.getString(extension))) {
+				out.add(extension.substring(prefixMime.length()));
+			}
+		}
+		return out;
+	}
+
+	
 }
