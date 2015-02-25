@@ -19,32 +19,17 @@ public class JODConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(JODConverter.class);
 
+	private static final String CODE = "JOD";
+
+	public static String getCode() {
+		return CODE;
+	}
+
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOC"),
 			Config.getString("mime.XLS"), Config.getString("mime.PPT"), Config.getString("mime.RTF"),
 			Config.getString("mime.TXT"), Config.getString("mime.DOCX"), Config.getString("mime.PPTX"),
 			Config.getString("mime.XLSX"), Config.getString("mime.ODT"), Config.getString("mime.ODS"),
 			Config.getString("mime.ODP") });
-
-	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
-		try {
-			OfficeDocumentConverter converter = new OfficeDocumentConverter(AppContext.getOfficeManager());
-
-			File tmpPDFOutput = File.createTempFile("JOD-PDF-Temp", ".pdf");
-			converter.convert(theFile, tmpPDFOutput);
-
-			ByteArrayInputStream resultStream = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(
-					tmpPDFOutput)));
-
-			tmpPDFOutput.delete();
-
-			return resultStream;
-
-		} catch (Exception e) {
-			log.error("Fail to create PDF in JOD Converter", e);
-			throw new PDFConverterException("Fail to create PDF in JOD Converter", e);
-		}
-	}
 
 	static boolean isContentSupported(String contentType) {
 		return SUPPORTED_MIMES.contains(contentType);
@@ -55,6 +40,22 @@ public class JODConverter implements PDFConverter {
 	 */
 	public static List<String> supportedExtensions() {
 		return PDFConverterFactory.supportedExtensions(SUPPORTED_MIMES);
+	}
+
+	@Override
+	public InputStream convertPDF(File theFile) throws PDFConverterException {
+		try {
+			OfficeDocumentConverter converter = new OfficeDocumentConverter(AppContext.getOfficeManager());
+			File tmpPDFOutput = File.createTempFile("JOD-PDF-Temp", ".pdf");
+			converter.convert(theFile, tmpPDFOutput);
+			ByteArrayInputStream resultStream = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(
+					tmpPDFOutput)));
+			tmpPDFOutput.delete();
+			return resultStream;
+		} catch (Exception e) {
+			log.error("Fail to create PDF in JOD Converter", e);
+			throw new PDFConverterException("Fail to create PDF in JOD Converter", e);
+		}
 	}
 
 }

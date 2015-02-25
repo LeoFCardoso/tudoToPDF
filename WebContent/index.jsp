@@ -1,3 +1,7 @@
+<%@page import="br.nom.leonardo.tudotopdf.pdf.AsposeWordsConverter"%>
+<%@page import="br.nom.leonardo.tudotopdf.pdf.OfficeToPDFConverter"%>
+<%@page import="br.nom.leonardo.tudotopdf.pdf.XDocReportConverter"%>
+<%@page import="br.nom.leonardo.tudotopdf.pdf.Docx4JConverter"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.JODConverter"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -30,11 +34,11 @@
 
 		<p>
 			strategy: <select name="strategy" size="1">
-				<option selected="selected" value="Docx4J">Docx4J (newest Office formats - OpenXML)</option>
-				<option value="JOD">JOD (<%=StringUtils.join(JODConverter.supportedExtensions(), ',')%>)</option>
-				<option value="XDocReport">XDocReport (DOCX only)</option>
-				<option value="OfficeToPDF">OfficeToPDF (all Office formats)</option>
-				<option value="AsposeWords">Aspose Words Commercial (all text formats)</option>
+				<option value="<%=Docx4JConverter.getCode()%>">Docx4J (<%=StringUtils.join(Docx4JConverter.supportedExtensions(), ',')%>)</option>
+				<option value="<%=JODConverter.getCode()%>">JOD (<%=StringUtils.join(JODConverter.supportedExtensions(), ',')%>)</option>
+				<option value="<%=XDocReportConverter.getCode()%>">XDocReport (<%=StringUtils.join(XDocReportConverter.supportedExtensions(), ',')%>)</option>
+				<option selected="selected" value="<%=OfficeToPDFConverter.getCode()%>">OfficeToPDF (<%=StringUtils.join(OfficeToPDFConverter.supportedExtensions(), ',')%>)</option>
+				<option value="<%=AsposeWordsConverter.getCode()%>">Aspose Words Commercial (<%=StringUtils.join(AsposeWordsConverter.supportedExtensions(), ',')%>)</option>
 				<option value="Dummy">Dummy</option>
 			<%-- 	
 			    <option value=""></option>

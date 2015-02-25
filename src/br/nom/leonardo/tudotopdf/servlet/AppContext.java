@@ -13,7 +13,6 @@ import br.nom.leonardo.tudotopdf.config.Config;
  * Handles init and destroy tasks within this webapp. It's a monostate.
  * 
  * @author leonardo
- *
  */
 public class AppContext {
 

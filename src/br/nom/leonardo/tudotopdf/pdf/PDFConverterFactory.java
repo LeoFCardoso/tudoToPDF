@@ -1,7 +1,7 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,20 +14,6 @@ import br.nom.leonardo.tudotopdf.config.Config;
  *
  */
 public class PDFConverterFactory {
-
-	private static final String DOC = "application/msword";
-	private static final String XLS = "application/vnd.ms-excel";
-	private static final String PPT = "application/vnd.ms-powerpoint";
-	
-	private static final String RTF = "application/rtf";
-	
-	private static final String TXT = "text/plain";
-
-	private static final String DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-	private static final String XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-	private static final String PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-
-	private static final String ODT = "application/vnd.oasis.opendocument.text";
 
 	/**
 	 * @param contentType
@@ -43,25 +29,23 @@ public class PDFConverterFactory {
 			return new NoConverter();
 		}
 
-		if ("Docx4J".equals(strategy) && Arrays.asList(new String[] { DOCX, PPTX, XLSX }).contains(contentType)) {
+		if (Docx4JConverter.getCode().equals(strategy) && Docx4JConverter.isContentSupported(contentType)) {
 			return new Docx4JConverter();
 		}
 
-		if ("JOD".equals(strategy)
-				&& JODConverter.isContentSupported(contentType)) {
+		if (JODConverter.getCode().equals(strategy) && JODConverter.isContentSupported(contentType)) {
 			return new JODConverter();
 		}
 
-		if ("XDocReport".equals(strategy) && Arrays.asList(new String[] { DOCX }).contains(contentType)) {
+		if (XDocReportConverter.getCode().equals(strategy) && XDocReportConverter.isContentSupported(contentType)) {
 			return new XDocReportConverter();
 		}
 
-		if ("OfficeToPDF".equals(strategy)
-				&& Arrays.asList(new String[] { DOC, XLS, PPT, RTF, DOCX, XLSX, PPTX }).contains(contentType)) {
+		if (OfficeToPDFConverter.getCode().equals(strategy) && OfficeToPDFConverter.isContentSupported(contentType)) {
 			return new OfficeToPDFConverter();
 		}
 
-		if ("AsposeWords".equals(strategy) && Arrays.asList(new String[] { DOC, DOCX, ODT, RTF, TXT }).contains(contentType)) {
+		if (AsposeWordsConverter.getCode().equals(strategy) && AsposeWordsConverter.isContentSupported(contentType)) {
 			return new AsposeWordsConverter();
 		}
 
@@ -71,7 +55,7 @@ public class PDFConverterFactory {
 
 		return null;
 	}
-	
+
 	/**
 	 * @return the supported extensions from a list of supported mimes (read configuration file)
 	 */
@@ -85,8 +69,8 @@ public class PDFConverterFactory {
 				out.add(extension.substring(prefixMime.length()));
 			}
 		}
+		Collections.sort(out);
 		return out;
 	}
 
-	
 }
