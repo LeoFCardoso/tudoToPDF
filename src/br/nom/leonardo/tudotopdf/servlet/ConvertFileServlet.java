@@ -169,6 +169,7 @@ public class ConvertFileServlet extends HttpServlet {
 		}
 
 		response.setContentType("application/pdf");
+		response.setHeader("Content-Disposition", "inline; filename=" + uploadedFile.getName() + ".pdf");
 		IOUtils.copy(pdfIS, response.getOutputStream());
 
 	}
