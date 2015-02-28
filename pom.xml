@@ -12,7 +12,18 @@
 			<id>AsposeJavaAPI</id>
 			<name>Aspose Java API</name>
 			<url>http://maven.aspose.com/artifactory/simple/ext-release-local/</url>
-		</repository> 
+		</repository>
+		<repository>
+			<!-- To use JAI (Java Advanced Imaging) -->
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mygrid-repository</id>
+			<name>myGrid Repository</name>
+			<url>http://www.mygrid.org.uk/maven/repository</url>
+		</repository>
+
 	</repositories>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -93,9 +104,15 @@
 		</dependency>
 		<dependency>
 			<groupId>com.aspose</groupId>
-   			<artifactId>aspose-words</artifactId>
-   			<version>15.1.0</version>
-   			<classifier>jdk16</classifier>
+			<artifactId>aspose-words</artifactId>
+			<version>15.1.0</version>
+			<classifier>jdk16</classifier>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jai-imageio</groupId>
+			<artifactId>jai-imageio-core-standalone</artifactId>
+			<version>1.2-pre-dr-b04-2014-09-13</version>
+			<!-- Java Advanced Imaging (JAI) http://stackoverflow.com/questions/1209583/using-java-advanced-imaging-with-maven -->
 		</dependency>
 	</dependencies>
 </project>

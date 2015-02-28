@@ -1,3 +1,4 @@
+<%@page import="br.nom.leonardo.tudotopdf.pdf.PDFBoxConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.AsposeWordsConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.OfficeToPDFConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.XDocReportConverter"%>
@@ -39,6 +40,7 @@
 				<option value="<%=XDocReportConverter.getCode()%>">XDocReport (<%=StringUtils.join(XDocReportConverter.supportedExtensions(), ',')%>)</option>
 				<option selected="selected" value="<%=OfficeToPDFConverter.getCode()%>">OfficeToPDF (<%=StringUtils.join(OfficeToPDFConverter.supportedExtensions(), ',')%>)</option>
 				<option value="<%=AsposeWordsConverter.getCode()%>">Aspose Words Commercial (<%=StringUtils.join(AsposeWordsConverter.supportedExtensions(), ',')%>)</option>
+				<option value="<%=PDFBoxConverter.getCode()%>">PDFBox (<%=StringUtils.join(PDFBoxConverter.supportedExtensions(), ',')%>)</option>
 				<option value="Dummy">Dummy</option>
 			<%-- 	
 			    <option value=""></option>

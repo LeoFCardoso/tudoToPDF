@@ -49,6 +49,10 @@ public class PDFConverterFactory {
 			return new AsposeWordsConverter();
 		}
 
+		if (PDFBoxConverter.getCode().equals(strategy) && PDFBoxConverter.isContentSupported(contentType)) {
+			return new PDFBoxConverter();
+		}
+
 		if ("Dummy".equals(strategy)) {
 			return new DummyPDFConverter();
 		}
