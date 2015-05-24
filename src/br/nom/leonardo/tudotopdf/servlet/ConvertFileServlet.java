@@ -31,7 +31,7 @@ import br.nom.leonardo.tudotopdf.pdf.PDFPostProcess;
 /**
  * Servlet implementation class ConvertFileServlet
  */
-@WebServlet(description = "A servlet to convert generic content to PDF", urlPatterns = { "/fileSubmit" })
+@WebServlet(description = "A servlet to convert generic content to PDF", urlPatterns = { "/fileSubmit.pdf" })
 @MultipartConfig
 public class ConvertFileServlet extends HttpServlet {
 

@@ -199,7 +199,6 @@ public class PDFPostProcess {
 			}
 
 			if (config.isProtect()) {
-
 				String ownerPassword = RandomStringUtils.randomAlphanumeric(30);
 				String userPassword = "";
 				AccessPermission ap = new AccessPermission(0);
@@ -215,6 +214,10 @@ public class PDFPostProcess {
 
 				doc.setSecurityHandler(ssh);
 				doc.protect(spp);
+			} else {
+				//No protection. In fact, this can remove protection from documents.
+				//Use with caution
+				doc.setAllSecurityToBeRemoved(true);
 			}
 
 			// Add tudoToPDF "signature"

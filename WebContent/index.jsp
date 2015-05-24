@@ -17,7 +17,7 @@
 	<p>
 		<strong>Please upload a file and set parameters.</strong>
 	</p>
-	<form action="fileSubmit" enctype="multipart/form-data"
+	<form action="fileSubmit.pdf" enctype="multipart/form-data"
 		id="fileSubmitForm" method="post" name="fileSubmit" target="_self">
 		<p>
 			&nbsp;&nbsp;<input name="theFile" size="50" type="file" />
