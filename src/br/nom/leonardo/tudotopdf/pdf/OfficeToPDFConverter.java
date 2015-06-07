@@ -22,7 +22,7 @@ public class OfficeToPDFConverter extends FilePollingConverter {
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOC"),
 			Config.getString("mime.XLS"), Config.getString("mime.PPT"), Config.getString("mime.RTF"),
-			/* Config.getString("mime.TXT") Still not supported in 1.5 , */ Config.getString("mime.DOCX"), Config.getString("mime.PPTX"),
+			Config.getString("mime.TXT"), Config.getString("mime.DOCX"), Config.getString("mime.PPTX"),
 			Config.getString("mime.XLSX") });
 
 	static boolean isContentSupported(String contentType) {
