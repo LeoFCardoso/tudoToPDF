@@ -18,6 +18,7 @@ import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,25 +119,25 @@ public class PDFPostProcess {
 						// Middle
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeMiddle());
-						contentStream.moveTextPositionByAmount((pageWidth - textWidthMiddle) / 2, yMargin
+						contentStream.newLineAtOffset((pageWidth - textWidthMiddle) / 2, yMargin
 								+ (pageHeight - textHeightMiddle) / 2);
-						contentStream.drawString(config.getTextMiddle());
+						contentStream.showText(config.getTextMiddle());
 						contentStream.endText();
 
 						// Top
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeTop());
-						contentStream.moveTextPositionByAmount((pageWidth - textWidthTop) / 2, yMargin + pageHeight / 2
+						contentStream.newLineAtOffset((pageWidth - textWidthTop) / 2, yMargin + pageHeight / 2
 								+ (pageHeight / 2 - textHeightTop) / 2);
-						contentStream.drawString(config.getTextTop());
+						contentStream.showText(config.getTextTop());
 						contentStream.endText();
 
 						// Bottom
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeBottom());
-						contentStream.moveTextPositionByAmount((pageWidth - textWidthBottom) / 2, yMargin
+						contentStream.newLineAtOffset((pageWidth - textWidthBottom) / 2, yMargin
 								+ (pageHeight / 2 - textHeightBottom) / 2);
-						contentStream.drawString(config.getTextBottom());
+						contentStream.showText(config.getTextBottom());
 						contentStream.endText();
 					}
 
@@ -145,46 +146,46 @@ public class PDFPostProcess {
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeMiddle());
 						double angle = Math.atan(pageHeight / pageWidth);
-						contentStream.setTextRotation(angle, 0, 0);
+						contentStream.setTextMatrix(Matrix.getRotateInstance(angle, 0, 0));
 						float pageDiagonal = (float) Math.sqrt(Math.pow(pageHeight, 2) + Math.pow(pageWidth, 2));
-						contentStream.moveTextPositionByAmount((pageDiagonal - textWidthMiddle) / 2, yMargin
-								- textHeightMiddle / 2);
-						contentStream.drawString(config.getTextMiddle());
+						contentStream.newLineAtOffset((pageDiagonal - textWidthMiddle) / 2, yMargin - textHeightMiddle
+								/ 2);
+						contentStream.showText(config.getTextMiddle());
 						contentStream.endText();
 
 						// Top (diagonal)
 						contentStream.beginText();
-						contentStream.setTextRotation(angle, 0, 0);
+						contentStream.setTextMatrix(Matrix.getRotateInstance(angle, 0, 0));
 						contentStream.setFont(font, config.getSizeTop());
 						// float upDiagonal = (float) Math.sqrt(Math.pow(pageHeight / 2, 2) +
 						// Math.pow(pageWidth / 2, 2));
-						contentStream.moveTextPositionByAmount((pageDiagonal - textWidthTop) / 2, yMargin
-								- textHeightTop / 2 + pageHeight / 4);
-						contentStream.drawString(config.getTextTop());
+						contentStream.newLineAtOffset((pageDiagonal - textWidthTop) / 2, yMargin - textHeightTop / 2
+								+ pageHeight / 4);
+						contentStream.showText(config.getTextTop());
 						contentStream.endText();
 
 						// Bottom (diagonal)
 						contentStream.beginText();
-						contentStream.setTextRotation(angle, 0, 0);
+						contentStream.setTextMatrix(Matrix.getRotateInstance(angle, 0, 0));
 						contentStream.setFont(font, config.getSizeBottom());
-						contentStream.moveTextPositionByAmount((pageDiagonal - textWidthBottom) / 2, yMargin
-								- textHeightBottom / 2 - pageHeight / 4);
-						contentStream.drawString(config.getTextBottom());
+						contentStream.newLineAtOffset((pageDiagonal - textWidthBottom) / 2, yMargin - textHeightBottom
+								/ 2 - pageHeight / 4);
+						contentStream.showText(config.getTextBottom());
 						contentStream.endText();
 					}
 
 					// Header
 					contentStream.beginText();
 					contentStream.setFont(font, config.getSizeHeader());
-					contentStream.moveTextPositionByAmount(10, pageHeight - textHeightHeader);
-					contentStream.drawString(config.getTextHeader());
+					contentStream.newLineAtOffset(10, pageHeight - textHeightHeader);
+					contentStream.showText(config.getTextHeader());
 					contentStream.endText();
 
 					// Footer
 					contentStream.beginText();
 					contentStream.setFont(font, config.getSizeFooter());
-					contentStream.moveTextPositionByAmount(10, 10);
-					contentStream.drawString(config.getTextFooter());
+					contentStream.newLineAtOffset(10, 10);
+					contentStream.showText(config.getTextFooter());
 					contentStream.endText();
 
 					// close and clean up

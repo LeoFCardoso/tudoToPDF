@@ -34,8 +34,8 @@ public class DummyPDFConverter implements PDFConverter {
 			PDPageContentStream contentStream = new PDPageContentStream(document, page);
 			contentStream.beginText();
 			contentStream.setFont(font, 12);
-			contentStream.moveTextPositionByAmount(100, 700);
-			contentStream.drawString("This is a test PDF file.");
+			contentStream.newLineAtOffset(100, 700);
+			contentStream.showText("This is a test PDF file.");
 			contentStream.endText();
 			contentStream.close();
 			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();

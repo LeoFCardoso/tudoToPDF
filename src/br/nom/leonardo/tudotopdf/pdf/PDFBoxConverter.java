@@ -111,7 +111,7 @@ public class PDFBoxConverter implements PDFConverter {
 				PDPageContentStream contentStream = new PDPageContentStream(doc, page);
 				float scaleW = page.getArtBox().getWidth() / pdfBoxImage.getWidth();
 				float scaleH = page.getArtBox().getHeight() / pdfBoxImage.getHeight();
-				contentStream.drawXObject(pdfBoxImage, 0, 0, pdfBoxImage.getWidth() * scaleW, pdfBoxImage.getHeight()
+				contentStream.drawImage(pdfBoxImage, 0, 0, pdfBoxImage.getWidth() * scaleW, pdfBoxImage.getHeight()
 						* scaleH);
 				contentStream.close();
 
