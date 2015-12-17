@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.Normalizer;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -69,7 +70,7 @@ public class ConvertFileServlet extends HttpServlet {
 
 		// Use UUID to handle same file name uploaded multiple times
 		File uploadedFile = new File(uploadFilePath + File.separatorChar + UUID.randomUUID().toString() + '-'
-				+ getFileName(filePart));
+				+ flattenToAscii(getFileName(filePart)));
 		FileUtils.copyInputStreamToFile(filePart.getInputStream(), uploadedFile);
 		log.debug("File saved to {}.", uploadedFile.getCanonicalPath());
 
@@ -203,5 +204,14 @@ public class ConvertFileServlet extends HttpServlet {
 		}
 		return null;
 	}
+	
+	private String flattenToAscii(String string) {
+        StringBuilder sb = new StringBuilder(string.length());
+        string = Normalizer.normalize(string, Normalizer.Form.NFD);
+        for (char c : string.toCharArray()) {
+            if (c <= '\u007F') sb.append(c);
+        }
+        return sb.toString();
+    }
 
 }
