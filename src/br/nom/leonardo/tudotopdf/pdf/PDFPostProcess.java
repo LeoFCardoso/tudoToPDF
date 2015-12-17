@@ -5,22 +5,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
-import org.apache.pdfbox.pdmodel.encryption.StandardSecurityHandler;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.PDExtendedGraphicsState;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,33 +45,29 @@ public class PDFPostProcess {
 
 			// Try to decrypt with blank password
 			if (doc.isEncrypted()) {
-				doc.decrypt("");
+				doc = PDDocument.load(pdfIS, "");
 			}
 
 			if (config.isWatermark()) {
 
-				PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
-				graphicsState.setNonStrokingAlphaConstant(Float.valueOf(config.getTransparency()) / 100f);
+				PDExtendedGraphicsState extendedGraphicsState = new PDExtendedGraphicsState();
+				extendedGraphicsState.setNonStrokingAlphaConstant(Float.valueOf(config.getTransparency()) / 100f);
 
-				@SuppressWarnings("rawtypes")
-				List allPages = doc.getDocumentCatalog().getAllPages();
-
-				PDFont font = PDType1Font.getStandardFont("Helvetica");
+				PDFont font = PDType1Font.HELVETICA;
 
 				// Iterate on every page to add watermark
-				for (int i = 0; i < allPages.size(); i++) {
+				for (PDPage page : doc.getPages()) {
+					PDRectangle pageSize = page.getMediaBox();
 
-					PDPage page = (PDPage) allPages.get(i);
-					PDRectangle pageSize = page.findMediaBox();
-
-					PDResources resources = page.findResources();
-					Map<String, PDExtendedGraphicsState> graphicsStateDictionary = resources.getGraphicsStates();
-					if (graphicsStateDictionary == null) {
-						graphicsStateDictionary = new TreeMap<String, PDExtendedGraphicsState>();
+					PDResources resources = page.getResources();
+					PDExtendedGraphicsState graphicsState = null;
+					if (resources != null) {
+						graphicsState = resources.getExtGState(COSName.TRANSPARENCY);
+						if (graphicsState == null) {
+							graphicsState = extendedGraphicsState;
+						}
+						resources.add(graphicsState);
 					}
-					String graphicStateDictName = "TransparentLayerGraphicState";
-					graphicsStateDictionary.put(graphicStateDictName, graphicsState);
-					resources.setGraphicsStates(graphicsStateDictionary);
 
 					// calculate the width / height of the string according to the font
 					float textWidthMiddle = font.getStringWidth(config.getTextMiddle()) * config.getSizeMiddle()
@@ -108,8 +101,10 @@ public class PDFPostProcess {
 
 					PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
 
-					// http://jesseontech.blogspot.com.br/2012/07/opacity-in-pdfboxs-pdpagecontentstream.html
-					contentStream.appendRawCommands("/" + graphicStateDictName + " gs\n");
+					// Transparent...
+					if (graphicsState != null) {
+						contentStream.setGraphicsStateParameters(graphicsState);
+					}
 
 					// Color
 					// More Info: http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html
@@ -204,19 +199,14 @@ public class PDFPostProcess {
 				AccessPermission ap = new AccessPermission(0);
 				ap.setCanPrint(true);
 				ap.setCanPrintDegraded(true);
-
+				int keyLength = 128;
+				// TODO AES Encryption
 				StandardProtectionPolicy spp = new StandardProtectionPolicy(ownerPassword, userPassword, ap);
-				spp.setEncryptionKeyLength(128);
-
-				StandardSecurityHandler ssh = new StandardSecurityHandler(spp);
-				ssh.setKeyLength(128); // TODO AES not working. Maybe in PDFBOX 2.0
-				ssh.setAES(true);
-
-				doc.setSecurityHandler(ssh);
+				spp.setEncryptionKeyLength(keyLength);
 				doc.protect(spp);
 			} else {
-				//No protection. In fact, this can remove protection from documents.
-				//Use with caution
+				// No protection. In fact, this can remove protection from documents.
+				// Use with caution
 				doc.setAllSecurityToBeRemoved(true);
 			}
 
@@ -241,5 +231,4 @@ public class PDFPostProcess {
 		}
 
 	}
-
 }

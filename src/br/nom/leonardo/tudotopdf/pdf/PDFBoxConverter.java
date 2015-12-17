@@ -15,11 +15,11 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDJpeg;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
-import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,13 +92,13 @@ public class PDFBoxConverter implements PDFConverter {
 				PDPage page = new PDPage(new PDRectangle(buffImage.getWidth(), buffImage.getHeight()));
 				doc.addPage(page);
 
-				PDXObjectImage pdfBoxImage = null;
+				PDImageXObject pdfBoxImage = null;
 				if (Config.getString("mime.JPG").equals(realContentType)) {
 					// JPG compression
-					pdfBoxImage = new PDJpeg(doc, buffImage);
+					pdfBoxImage = JPEGFactory.createFromImage(doc, buffImage);
 				} else {
 					// All other - PNG compression
-					pdfBoxImage = new PDPixelMap(doc, buffImage);
+					pdfBoxImage = LosslessFactory.createFromImage(doc, buffImage);
 				}
 				// TIFF compression (uses temporary file - TODO fix, because it's not working with
 				// all tiffs
