@@ -42,13 +42,9 @@ public class PDFPostProcess {
 		PDDocument doc = null;
 		try {
 
-			doc = PDDocument.load(pdfIS);
-
-			// Try to decrypt with blank password
-			if (doc.isEncrypted()) {
-				doc = PDDocument.load(pdfIS, "");
-			}
-
+			// Allways try to decrypt with blank password
+			doc = PDDocument.load(pdfIS, "");
+			
 			if (config.isWatermark()) {
 
 				PDExtendedGraphicsState extendedGraphicsState = new PDExtendedGraphicsState();

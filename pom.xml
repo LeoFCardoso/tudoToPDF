@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tudoToPDF</groupId>
 	<artifactId>tudoToPDF</artifactId>
-	<version>0.2.0-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>tudoToPDF web project</name>
 	<description>This is tudoToPDF web project</description>
@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>com.aspose</groupId>
 			<artifactId>aspose-words</artifactId>
-			<version>15.5.0</version>
+			<version>15.9.0</version>
 			<classifier>jdk16</classifier>
 		</dependency>
 		<dependency>
