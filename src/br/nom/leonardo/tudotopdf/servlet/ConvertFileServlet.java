@@ -53,8 +53,8 @@ public class ConvertFileServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-			IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		log.debug("Starting file conversion. Session id=" + request.getSession().getId());
 
 		Part filePart = request.getPart("theFile");
@@ -63,8 +63,8 @@ public class ConvertFileServlet extends HttpServlet {
 		log.debug("Upload file path is {}.", uploadFilePath);
 
 		if (filePart.getSize() > Config.getLong("application.maxFileSizeBytes")) {
-			showError(response, "Uploaded file is bigger than " + Config.getLong("application.maxFileSizeBytes")
-					+ " bytes.");
+			showError(response,
+					"Uploaded file is bigger than " + Config.getLong("application.maxFileSizeBytes") + " bytes.");
 			return;
 		}
 
@@ -87,53 +87,53 @@ public class ConvertFileServlet extends HttpServlet {
 		boolean isProtected = "on".equals(request.getParameter("protected"));
 		log.debug("PDF will be protected: " + isProtected);
 
-		String textHeader = StringUtils.isBlank(request.getParameter("headerWmText")) ? "" : request
-				.getParameter("headerWmText");
+		String textHeader = StringUtils.isBlank(request.getParameter("headerWmText")) ? ""
+				: request.getParameter("headerWmText");
 		log.debug("PDF Header: " + textHeader);
-		String textTop = StringUtils.isBlank(request.getParameter("topWmText")) ? "" : request
-				.getParameter("topWmText");
+		String textTop = StringUtils.isBlank(request.getParameter("topWmText")) ? ""
+				: request.getParameter("topWmText");
 		log.debug("PDF Top: " + textTop);
-		String textMiddle = StringUtils.isBlank(request.getParameter("middleWmText")) ? "" : request
-				.getParameter("middleWmText");
+		String textMiddle = StringUtils.isBlank(request.getParameter("middleWmText")) ? ""
+				: request.getParameter("middleWmText");
 		log.debug("PDF Middle: " + textMiddle);
-		String textBottom = StringUtils.isBlank(request.getParameter("bottomWmText")) ? "" : request
-				.getParameter("bottomWmText");
+		String textBottom = StringUtils.isBlank(request.getParameter("bottomWmText")) ? ""
+				: request.getParameter("bottomWmText");
 		log.debug("PDF Bottom: " + textBottom);
-		String textFooter = StringUtils.isBlank(request.getParameter("footerWmText")) ? "" : request
-				.getParameter("footerWmText");
+		String textFooter = StringUtils.isBlank(request.getParameter("footerWmText")) ? ""
+				: request.getParameter("footerWmText");
 		log.debug("PDF Footer: " + textFooter);
 
 		int sizeHeader = StringUtils.isBlank(request.getParameter("headerWmSize"))
-				|| !StringUtils.isNumeric(request.getParameter("headerWmSize")) ? 0 : Integer.parseInt(request
-				.getParameter("headerWmSize"));
+				|| !StringUtils.isNumeric(request.getParameter("headerWmSize")) ? 0
+						: Integer.parseInt(request.getParameter("headerWmSize"));
 		log.debug("PDF Header size: " + sizeHeader);
 		int sizeTop = StringUtils.isBlank(request.getParameter("topWmSize"))
-				|| !StringUtils.isNumeric(request.getParameter("topWmSize")) ? 0 : Integer.parseInt(request
-				.getParameter("topWmSize"));
+				|| !StringUtils.isNumeric(request.getParameter("topWmSize")) ? 0
+						: Integer.parseInt(request.getParameter("topWmSize"));
 		log.debug("PDF Top size: " + sizeTop);
 		int sizeMiddle = StringUtils.isBlank(request.getParameter("middleWmSize"))
-				|| !StringUtils.isNumeric(request.getParameter("middleWmSize")) ? 0 : Integer.parseInt(request
-				.getParameter("middleWmSize"));
+				|| !StringUtils.isNumeric(request.getParameter("middleWmSize")) ? 0
+						: Integer.parseInt(request.getParameter("middleWmSize"));
 		log.debug("PDF Middle size: " + sizeMiddle);
 		int sizeBottom = StringUtils.isBlank(request.getParameter("bottomWmSize"))
-				|| !StringUtils.isNumeric(request.getParameter("bottomWmSize")) ? 0 : Integer.parseInt(request
-				.getParameter("bottomWmSize"));
+				|| !StringUtils.isNumeric(request.getParameter("bottomWmSize")) ? 0
+						: Integer.parseInt(request.getParameter("bottomWmSize"));
 		log.debug("PDF Bottom size: " + sizeBottom);
 		int sizeFooter = StringUtils.isBlank(request.getParameter("footerWmSize"))
-				|| !StringUtils.isNumeric(request.getParameter("footerWmSize")) ? 0 : Integer.parseInt(request
-				.getParameter("footerWmSize"));
+				|| !StringUtils.isNumeric(request.getParameter("footerWmSize")) ? 0
+						: Integer.parseInt(request.getParameter("footerWmSize"));
 		log.debug("PDF Footer size: " + sizeFooter);
 
-		String waterkMarkType = StringUtils.isBlank(request.getParameter("watermarkType")) ? "diagonal" : request
-				.getParameter("watermarkType");
+		String waterkMarkType = StringUtils.isBlank(request.getParameter("watermarkType")) ? "diagonal"
+				: request.getParameter("watermarkType");
 		if (!"horizontal".equals(waterkMarkType)) {
 			waterkMarkType = "diagonal"; // Allows horizontal and nothing else
 		}
 		log.debug("Watermark type: " + waterkMarkType);
 
 		int transparency = StringUtils.isBlank(request.getParameter("transparency"))
-				|| !StringUtils.isNumeric(request.getParameter("transparency")) ? 50 : Integer.parseInt(request
-				.getParameter("transparency"));
+				|| !StringUtils.isNumeric(request.getParameter("transparency")) ? 50
+						: Integer.parseInt(request.getParameter("transparency"));
 		log.debug("Transparency: " + transparency);
 
 		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? "" : request.getParameter("strategy");
@@ -160,7 +160,6 @@ public class ConvertFileServlet extends HttpServlet {
 			ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader,
 					textTop, textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom,
 					sizeFooter, transparency, waterkMarkType);
-
 			pdfIS = PDFPostProcess.process(pdfIS, config);
 			log.debug("PDF post processed");
 		} catch (PDFConverterException e) {
@@ -204,14 +203,15 @@ public class ConvertFileServlet extends HttpServlet {
 		}
 		return null;
 	}
-	
+
 	private String flattenToAscii(String string) {
-        StringBuilder sb = new StringBuilder(string.length());
-        string = Normalizer.normalize(string, Normalizer.Form.NFD);
-        for (char c : string.toCharArray()) {
-            if (c <= '\u007F') sb.append(c);
-        }
-        return sb.toString();
-    }
+		StringBuilder sb = new StringBuilder(string.length());
+		string = Normalizer.normalize(string, Normalizer.Form.NFD);
+		for (char c : string.toCharArray()) {
+			if (c <= '\u007F')
+				sb.append(c);
+		}
+		return sb.toString();
+	}
 
 }

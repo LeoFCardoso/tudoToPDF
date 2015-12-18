@@ -48,6 +48,10 @@ public class AppContext {
 	}
 
 	public static OfficeManager getOfficeManager() {
+		/*
+		 * In OSX and LibreOffice 5, you must create a symlink for soffice executable. $ pwd
+		 * /Applications/LibreOffice.app/Contents/MacOS $ ln -s ./soffice ./soffice.bin
+		 */
 		if (officeManager == null) {
 			officeManager = configuration.buildOfficeManager();
 			log.debug("JOD OfficeManager created");

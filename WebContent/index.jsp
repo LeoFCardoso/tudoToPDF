@@ -1,3 +1,4 @@
+<%@page import="br.nom.leonardo.tudotopdf.config.Config"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.PDFBoxConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.AsposeWordsConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.OfficeToPDFConverter"%>
@@ -14,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<title>Welcome to tudoToPDF</title>
+	<title>Welcome to tudoToPDF version <%=Config.VERSION%></title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -97,7 +98,7 @@
 		</p>
 	</form>
 	<p>&nbsp;</p>
-	<P>Powered by tudoToPDF.
+	<P>Powered by tudoToPDF v<%=Config.VERSION%>.
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>

@@ -4,7 +4,7 @@
 <configuration>
 	<system />
 	<properties
-		fileName="/home/leonardo/Documents/workspace-eclipse/tudoToPDF/tudoToPDF.properties"
+		fileName="/Users/leonardo/Documents/workspace-eclipse/tudoToPDF/tudoToPDF.properties"
 		config-optional="true" />
 	<properties fileName="/opt/leo/tudoToPDF.properties"
 		config-optional="true" />
