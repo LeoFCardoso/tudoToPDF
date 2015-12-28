@@ -24,11 +24,6 @@ public class PDFConverterFactory {
 	 */
 	public static PDFConverter createPDFConverter(String contentType, String strategy) {
 
-		// PDF - this is fixed
-		if ("application/pdf".equals(contentType)) {
-			return new NoConverter();
-		}
-
 		if (Docx4JConverter.getCode().equals(strategy) && Docx4JConverter.isContentSupported(contentType)) {
 			return new Docx4JConverter();
 		}
@@ -53,6 +48,15 @@ public class PDFConverterFactory {
 			return new PDFBoxConverter();
 		}
 
+		if (PDF2PDFOCRConverter.getCode().equals(strategy) && PDF2PDFOCRConverter.isContentSupported(contentType)) {
+			return new PDF2PDFOCRConverter();
+		}
+		
+		// At this point, PDF will be passed "as is"
+		if ("application/pdf".equals(contentType)) {
+			return new NoConverter();
+		}
+		
 		if ("Dummy".equals(strategy)) {
 			return new DummyPDFConverter();
 		}

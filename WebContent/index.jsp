@@ -1,3 +1,4 @@
+<%@page import="br.nom.leonardo.tudotopdf.pdf.PDF2PDFOCRConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.config.Config"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.PDFBoxConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.AsposeWordsConverter"%>
@@ -48,7 +49,6 @@
 		    protected: <input name="protected" type="checkbox"
 				checked="checked" />
 		</p>
-
 		<p>
 			strategy: <select name="strategy" size="1">
 				<option value="<%=Docx4JConverter.getCode()%>">Docx4J (<%=StringUtils.join(Docx4JConverter.supportedExtensions(), ',')%>)</option>
@@ -57,6 +57,7 @@
 				<option selected="selected" value="<%=OfficeToPDFConverter.getCode()%>">OfficeToPDF (<%=StringUtils.join(OfficeToPDFConverter.supportedExtensions(), ',')%>)</option>
 				<option value="<%=AsposeWordsConverter.getCode()%>">Aspose Words Commercial (<%=StringUtils.join(AsposeWordsConverter.supportedExtensions(), ',')%>)</option>
 				<option value="<%=PDFBoxConverter.getCode()%>">PDFBox (<%=StringUtils.join(PDFBoxConverter.supportedExtensions(), ',')%>)</option>
+				<option value="<%=PDF2PDFOCRConverter.getCode()%>">PDF2PDFOCR (<%=StringUtils.join(PDF2PDFOCRConverter.supportedExtensions(), ',')%>)</option>
 				<option value="Dummy">Dummy</option>
 			<%-- 	
 			    <option value=""></option>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tudoToPDF</groupId>
 	<artifactId>tudoToPDF</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.4.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>tudoToPDF web project</name>
 	<description>This is tudoToPDF web project</description>
@@ -113,6 +113,12 @@
 			<artifactId>jai-imageio-core-standalone</artifactId>
 			<version>1.2-pre-dr-b04-2014-09-13</version>
 			<!-- Java Advanced Imaging (JAI) http://stackoverflow.com/questions/1209583/using-java-advanced-imaging-with-maven -->
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
