@@ -54,6 +54,8 @@ public class JODConverter implements PDFConverter {
 			return resultStream;
 		} catch (Exception e) {
 			log.error("Fail to create PDF in JOD Converter", e);
+			log.info("Trying to restart office manager for next request...");
+			AppContext.restartOfficeManager();
 			throw new PDFConverterException("Fail to create PDF in JOD Converter", e);
 		}
 	}

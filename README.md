@@ -15,6 +15,7 @@ Please look for "tudoToPDF.properties" file. It's location depends on path defin
 #### How to build
 
 To build this project, you only need maven. Please look for "pom.xml".
+Please add some JODConverter compilation to your maven local repository. I use https://github.com/nuxeo/jodconverter and after compiling "mvn install:install-file -Dfile=<path-to-jarfile> -DpomFile=<path-to-pomfile>"
 
 #### Why this name "tudo"ToPDF?
 

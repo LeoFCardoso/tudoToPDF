@@ -3,6 +3,7 @@ package br.nom.leonardo.tudotopdf.servlet;
 import java.io.File;
 
 import org.artofsolving.jodconverter.office.DefaultOfficeManagerConfiguration;
+import org.artofsolving.jodconverter.office.OfficeException;
 import org.artofsolving.jodconverter.office.OfficeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,29 +40,42 @@ public class AppContext {
 		if (officeProfileParam != null) {
 			configuration.setTemplateProfileDir(new File(officeProfileParam));
 		}
+		Long timeoutParam = Config.getLong("jod.timeoutMillis");
+		if (timeoutParam != null) {
+			configuration.setTaskExecutionTimeout(timeoutParam);
+		}
 	}
 
 	static void destroy() {
-		officeManager.stop();
-		log.debug("JOD OfficeManager stoped");
+		try {
+			officeManager.stop();
+			log.debug("JOD OfficeManager stoped");
+		} catch (OfficeException e) {
+			log.debug("Fail to stop JOD Office Manager. I hope for the best...");
+		}
 		officeManager = null;
 	}
 
 	public static OfficeManager getOfficeManager() {
-		/*
-		 * In OSX and LibreOffice 5, you must create a symlink for soffice executable. $ pwd
-		 * /Applications/LibreOffice.app/Contents/MacOS $ ln -s ./soffice ./soffice.bin
-		 */
 		if (officeManager == null) {
-			officeManager = configuration.buildOfficeManager();
-			log.debug("JOD OfficeManager created");
-			officeManager.start();
-			log.debug("JOD OfficeManager started (lazy)");
-		}
-		if (!officeManager.isRunning()) {
-			officeManager.start();
+			createAndStartOfficeManager();
 		}
 		return officeManager;
+	}
+
+	private static void createAndStartOfficeManager() {
+		officeManager = configuration.buildOfficeManager();
+		log.debug("JOD OfficeManager created");
+		officeManager.start();
+		log.debug("JOD OfficeManager started (lazy)");
+	}
+
+	/**
+	 * Rebuild Office Manager
+	 */
+	public static void restartOfficeManager() {
+		destroy();
+		createAndStartOfficeManager();
 	}
 
 }
