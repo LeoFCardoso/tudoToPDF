@@ -1,8 +1,8 @@
 package br.nom.leonardo.tudotopdf.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.UUID;
@@ -15,19 +15,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tika.Tika;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.nom.leonardo.tudotopdf.config.Config;
+import br.nom.leonardo.tudotopdf.job.JobStatus;
+import br.nom.leonardo.tudotopdf.job.PdfConversionJob;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverter;
-import br.nom.leonardo.tudotopdf.pdf.PDFConverterException;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverterFactory;
-import br.nom.leonardo.tudotopdf.pdf.PDFPostProcess;
 
 /**
  * Servlet implementation class ConvertFileServlet
@@ -55,32 +62,101 @@ public class ConvertFileServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		log.debug("Starting file conversion. Session id=" + request.getSession().getId());
 
-		Part filePart = request.getPart("theFile");
+		try {
+			request.setCharacterEncoding("UTF-8");
 
-		String uploadFilePath = Config.getString("application.uploadedFiles");
-		log.debug("Upload file path is {}.", uploadFilePath);
+			log.debug("Starting file conversion. Session id=" + request.getSession().getId());
 
-		if (filePart.getSize() > Config.getLong("application.maxFileSizeBytes")) {
-			showError(response,
-					"Uploaded file is bigger than " + Config.getLong("application.maxFileSizeBytes") + " bytes.");
+			Part filePart = request.getPart("theFile");
+
+			String uploadFilePath = Config.getString("application.uploadedFiles");
+			log.debug("Upload file path is {}.", uploadFilePath);
+
+			if (filePart.getSize() > Config.getLong("application.maxFileSizeBytes")) {
+				showError(response,
+						"Uploaded file is bigger than " + Config.getLong("application.maxFileSizeBytes") + " bytes.");
+				return;
+			}
+
+			// Use UUID to handle same file name uploaded multiple times
+			File uploadedFile = new File(uploadFilePath + File.separatorChar + UUID.randomUUID().toString() + '-'
+					+ flattenToAscii(getFileName(filePart)));
+			FileUtils.copyInputStreamToFile(filePart.getInputStream(), uploadedFile);
+			log.debug("File saved to {}.", uploadedFile.getCanonicalPath());
+
+			String uploadedContentType = filePart.getContentType();
+			Tika tika = new Tika();
+			String realContentType = tika.detect(uploadedFile);
+
+			log.debug("The file name is \"{}\", with uploaded content type {} and real content type {}.",
+					getFileName(filePart), uploadedContentType, realContentType);
+
+			FileInputStream fis = new FileInputStream(uploadedFile);
+			String md5UploadedFile = DigestUtils.md5Hex(fis);
+			fis.close();
+			log.debug("The file md5 is \"{}\"", md5UploadedFile);
+
+			String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? ""
+					: request.getParameter("strategy");
+			log.debug("Conversion strategy: " + strategy);
+
+			ConversionConfiguration config = buildConversionConfiguration(request);
+
+			PDFConverter converter = PDFConverterFactory.createPDFConverter(realContentType, strategy);
+			if (converter == null) {
+				showError(response, "Invalid strategy for mime type " + realContentType);
+				return;
+			}
+
+			boolean isAsync = "on".equals(request.getParameter("async"));
+			log.debug("PDF processing will be async?: " + isAsync);
+
+			if (isAsync) {
+				String jobUUID = UUID.randomUUID().toString();
+				JobKey jobKey = JobKey.jobKey(jobUUID);
+				JobDetail job = JobBuilder.newJob(PdfConversionJob.class).withIdentity(jobKey).storeDurably().build();
+				job.getJobDataMap().put("p_name", jobUUID);
+				job.getJobDataMap().put("p_status", JobStatus.PROCESSING);
+				job.getJobDataMap().put("p_converter", converter);
+				job.getJobDataMap().put("p_md5UploadedFile", md5UploadedFile);
+				job.getJobDataMap().put("p_uploadedFile", uploadedFile);
+				job.getJobDataMap().put("p_config", config);
+
+				Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+				Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobUUID).startNow().build();
+				scheduler.scheduleJob(job, trigger);
+
+				response.setContentType("application/json");
+				PrintWriter out = response.getWriter();
+				String protocol = request.getScheme();
+				String host = request.getServerName() + ":" + request.getServerPort();
+				String context = request.getServletContext().getContextPath();
+				String link = protocol + "://" + host + context + "/asyncResult?id=" + jobUUID;
+				out.print("{ result: '" + link + "' }");
+				out.close();
+			} else {
+				PdfConversionJob syncJob = new PdfConversionJob(converter, md5UploadedFile, uploadedFile, config);
+				syncJob.runSync();
+				// Send redirect to finalPDFFile
+				// With Tomcat, please read:
+				// http://www.moreofless.co.uk/static-content-web-pages-images-tomcat-outside-war/
+				String protocol = request.getScheme();
+				String host = request.getServerName() + ":" + request.getServerPort();
+				String staticContext = Config.getString("application.staticContext");
+				File finalPDFFile = syncJob.getFinalPDFFile();
+				response.sendRedirect(protocol + "://" + host + staticContext + "/" + finalPDFFile.getName());
+			}
+
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			showError(response, e.getMessage());
 			return;
 		}
 
-		// Use UUID to handle same file name uploaded multiple times
-		File uploadedFile = new File(uploadFilePath + File.separatorChar + UUID.randomUUID().toString() + '-'
-				+ flattenToAscii(getFileName(filePart)));
-		FileUtils.copyInputStreamToFile(filePart.getInputStream(), uploadedFile);
-		log.debug("File saved to {}.", uploadedFile.getCanonicalPath());
+	}
 
-		String uploadedContentType = filePart.getContentType();
-		Tika tika = new Tika();
-		String realContentType = tika.detect(uploadedFile);
-
-		log.debug("The file name is \"{}\", with uploaded content type {} and real content type {}.",
-				getFileName(filePart), uploadedContentType, realContentType);
-
+	private ConversionConfiguration buildConversionConfiguration(HttpServletRequest request) {
 		boolean isWatermarked = "on".equals(request.getParameter("watermark"));
 		log.debug("PDF will be watermarked: " + isWatermarked);
 
@@ -136,42 +212,10 @@ public class ConvertFileServlet extends HttpServlet {
 						: Integer.parseInt(request.getParameter("transparency"));
 		log.debug("Transparency: " + transparency);
 
-		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? "" : request.getParameter("strategy");
-		log.debug("Conversion strategy: " + strategy);
-
-		PDFConverter converter = PDFConverterFactory.createPDFConverter(realContentType, strategy);
-		if (converter == null) {
-			showError(response, "Invalid strategy for mime type " + realContentType);
-			return;
-		}
-
-		InputStream pdfIS = null;
-		try {
-			pdfIS = converter.convertPDF(uploadedFile);
-			log.debug("PDF content generated");
-		} catch (PDFConverterException e) {
-			log.error(e.getMessage(), e);
-			showError(response, e.getMessage());
-			return;
-		}
-
-		// We already have a PDF. Post process it.
-		try {
-			ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader,
-					textTop, textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom,
-					sizeFooter, transparency, waterkMarkType);
-			pdfIS = PDFPostProcess.process(pdfIS, config);
-			log.debug("PDF post processed");
-		} catch (PDFConverterException e) {
-			log.error(e.getMessage(), e);
-			showError(response, e.getMessage());
-			return;
-		}
-
-		response.setContentType("application/pdf");
-		response.setHeader("Content-Disposition", "inline; filename=" + uploadedFile.getName() + ".pdf");
-		IOUtils.copy(pdfIS, response.getOutputStream());
-
+		ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader, textTop,
+				textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter,
+				transparency, waterkMarkType);
+		return config;
 	}
 
 	private void showError(HttpServletResponse response, String msg) {

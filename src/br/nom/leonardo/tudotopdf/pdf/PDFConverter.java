@@ -1,7 +1,6 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.io.File;
-import java.io.InputStream;
 
 /**
  * Generic PDFConverter interface
@@ -14,9 +13,15 @@ public interface PDFConverter {
 	/**
 	 * Convert file to PDF
 	 * @param theFile
-	 * @return PDF input stream
+	 * @param md5UploadedFile 
+	 * @return PDF file on disk
 	 * @throws PDFConverterException
 	 */
-	public InputStream convertPDF(File theFile) throws PDFConverterException;
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException;
 
+	/**
+	 * @return Unique CODE of the converter. It's a simple String
+	 */
+	public String getCode();
+	
 }

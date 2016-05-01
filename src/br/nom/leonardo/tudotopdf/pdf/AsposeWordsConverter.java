@@ -1,33 +1,31 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.nom.leonardo.tudotopdf.config.Config;
-
 import com.aspose.words.Document;
+
+import br.nom.leonardo.tudotopdf.config.Config;
 
 public class AsposeWordsConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(AsposeWordsConverter.class);
 
-	private static final String CODE = "Aspose";
+	public static final String CODE = "Aspose";
 
-	public static String getCode() {
+	@Override
+	public String getCode() {
 		return CODE;
 	}
 
-	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOC"),
-			Config.getString("mime.DOCX"), Config.getString("mime.ODT"), Config.getString("mime.RTF"),
-			Config.getString("mime.TXT") });
+	private static final List<String> SUPPORTED_MIMES = Arrays
+			.asList(new String[] { Config.getString("mime.DOC"), Config.getString("mime.DOCX"),
+					Config.getString("mime.ODT"), Config.getString("mime.RTF"), Config.getString("mime.TXT") });
 
 	static boolean isContentSupported(String contentType) {
 		return SUPPORTED_MIMES.contains(contentType);
@@ -40,25 +38,17 @@ public class AsposeWordsConverter implements PDFConverter {
 		return PDFConverterFactory.supportedExtensions(SUPPORTED_MIMES);
 	}
 
-	
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 			// TEST ONLY!
 			// License license = new License();
 			// license.setLicense("");
-
-			File tmpPDFOutput = File.createTempFile("JOD-PDF-Temp", ".pdf");
+			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 			Document doc = new Document(new FileInputStream(theFile));
-			doc.save(tmpPDFOutput.getCanonicalPath());
-
-			ByteArrayInputStream resultStream = new ByteArrayInputStream(IOUtils.toByteArray(new FileInputStream(
-					tmpPDFOutput)));
-
-			tmpPDFOutput.delete();
-
-			return resultStream;
-
+			doc.save(pdfOutput.getCanonicalPath());
+			return pdfOutput;
 		} catch (Exception e) {
 			log.error("Fail to create PDF in AsposeWords Converter", e);
 			throw new PDFConverterException("Fail to create PDF in AsposeWords Converter", e);

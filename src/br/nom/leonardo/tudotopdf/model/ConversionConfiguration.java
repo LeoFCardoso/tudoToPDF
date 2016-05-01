@@ -157,4 +157,25 @@ public class ConversionConfiguration implements Serializable {
 		this.waterMarkType = waterMarkType;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (protect ? 1231 : 1237);
+		result = prime * result + sizeBottom;
+		result = prime * result + sizeFooter;
+		result = prime * result + sizeHeader;
+		result = prime * result + sizeMiddle;
+		result = prime * result + sizeTop;
+		result = prime * result + ((textBottom == null) ? 0 : textBottom.hashCode());
+		result = prime * result + ((textFooter == null) ? 0 : textFooter.hashCode());
+		result = prime * result + ((textHeader == null) ? 0 : textHeader.hashCode());
+		result = prime * result + ((textMiddle == null) ? 0 : textMiddle.hashCode());
+		result = prime * result + ((textTop == null) ? 0 : textTop.hashCode());
+		result = prime * result + transparency;
+		result = prime * result + ((waterMarkType == null) ? 0 : waterMarkType.hashCode());
+		result = prime * result + (watermark ? 1231 : 1237);
+		return result;
+	}
+
 }

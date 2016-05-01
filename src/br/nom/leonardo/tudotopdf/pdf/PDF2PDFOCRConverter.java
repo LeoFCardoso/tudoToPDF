@@ -1,9 +1,6 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -26,11 +23,13 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(PDF2PDFOCRConverter.class);
 
-	private static final String CODE = "PDF2PDFOCR";
+	public static final String CODE = "PDF2PDFOCR";
 
-	public static String getCode() {
+	@Override
+	public String getCode() {
 		return CODE;
 	}
+
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(
 			new String[] { Config.getString("mime.PDF"), Config.getString("mime.JPG"), Config.getString("mime.TIF") });
@@ -47,21 +46,22 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 	}
 
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 
 			// Call pdf2pdfocr.sh script
 			// https://github.com/LeoFCardoso/pdf2pdfocr
 
 			// This will be the output file from script.
-			File tmpPDFOutput = File.createTempFile("OCR-PDF-Temp-Output", ".pdf");
+			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 
 			// Run the script
 			List<String> command = new ArrayList<String>();
 			command.add(Config.getString("pdf2pdfocr.scriptPath"));
 			command.add("-t"); // Using safe text mode. Does not process if original PDF already contains text
 			command.add("-o");
-			command.add(tmpPDFOutput.getAbsolutePath());
+			command.add(pdfOutput.getAbsolutePath());
 			command.add(theFile.getAbsolutePath());
 
 			ProcessBuilder builder = new ProcessBuilder(command);
@@ -80,15 +80,12 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			log.info("pdf2pdfocr.sh ended with stdout {} and stderr {}.", outputFromScript, errorFromScript);
 
 			if (process.exitValue() != 0) {
-				tmpPDFOutput.delete();
+				pdfOutput.delete();
 				log.error("Fail to OCR when post process PDF.");
 				throw new PDFConverterException("Fail to OCR when post process PDF. Please see logs.");
 			}
 
-			ByteArrayInputStream resultStream = new ByteArrayInputStream(
-					IOUtils.toByteArray(new FileInputStream(tmpPDFOutput)));
-			tmpPDFOutput.delete();
-			return resultStream;
+			return pdfOutput;
 
 		} catch (Exception e) {
 			final String errorMsg = "Fail to create PDF in PDF2PDFOCR";

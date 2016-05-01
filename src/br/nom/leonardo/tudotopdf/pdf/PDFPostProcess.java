@@ -1,9 +1,7 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.File;
 import java.lang.reflect.Field;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -11,6 +9,7 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -22,6 +21,7 @@ import org.apache.pdfbox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.nom.leonardo.tudotopdf.config.Config;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
 
 public class PDFPostProcess {
@@ -31,26 +31,32 @@ public class PDFPostProcess {
 	/**
 	 * Post process a PDF to add watermarks and protection
 	 * 
-	 * @param pdfIS
-	 *            stream with PDF content
+	 * @param pdfFile
+	 *            file with PDF content
+	 * @param md5PdfFile
+	 *            md5 sum of first parameter
 	 * @param config
 	 *            configuration
-	 * @return stream with PDF content
+	 * @return file with PDF content
 	 */
-	public static InputStream process(InputStream pdfIS, ConversionConfiguration config) throws PDFConverterException {
+	public static File process(File pdfFile, String md5PdfFile, ConversionConfiguration config)
+			throws PDFConverterException {
 
 		PDDocument doc = null;
 		try {
 
 			// Allways try to decrypt with blank password
-			doc = PDDocument.load(pdfIS, "");
-			
+			doc = PDDocument.load(pdfFile, "");
+
 			if (config.isWatermark()) {
 
 				PDExtendedGraphicsState extendedGraphicsState = new PDExtendedGraphicsState();
 				extendedGraphicsState.setNonStrokingAlphaConstant(Float.valueOf(config.getTransparency()) / 100f);
 
 				PDFont font = PDType1Font.HELVETICA;
+				// InputStream realPath = PDFPostProcess.class.getClassLoader()
+				// .getResourceAsStream("STREETWISEBUDDY.TTF");
+				// PDFont font = PDType0Font.load(doc, realPath);
 
 				// Iterate on every page to add watermark
 				for (PDPage page : doc.getPages()) {
@@ -96,7 +102,8 @@ public class PDFPostProcess {
 					float pageWidth = pageSize.getWidth();
 					float pageHeight = pageSize.getHeight();
 
-					PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
+					PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.APPEND, true,
+							true);
 
 					// Transparent...
 					if (graphicsState != null) {
@@ -115,24 +122,24 @@ public class PDFPostProcess {
 						// Middle
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeMiddle());
-						contentStream.newLineAtOffset((pageWidth - textWidthMiddle) / 2, yMargin
-								+ (pageHeight - textHeightMiddle) / 2);
+						contentStream.newLineAtOffset((pageWidth - textWidthMiddle) / 2,
+								yMargin + (pageHeight - textHeightMiddle) / 2);
 						contentStream.showText(config.getTextMiddle());
 						contentStream.endText();
 
 						// Top
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeTop());
-						contentStream.newLineAtOffset((pageWidth - textWidthTop) / 2, yMargin + pageHeight / 2
-								+ (pageHeight / 2 - textHeightTop) / 2);
+						contentStream.newLineAtOffset((pageWidth - textWidthTop) / 2,
+								yMargin + pageHeight / 2 + (pageHeight / 2 - textHeightTop) / 2);
 						contentStream.showText(config.getTextTop());
 						contentStream.endText();
 
 						// Bottom
 						contentStream.beginText();
 						contentStream.setFont(font, config.getSizeBottom());
-						contentStream.newLineAtOffset((pageWidth - textWidthBottom) / 2, yMargin
-								+ (pageHeight / 2 - textHeightBottom) / 2);
+						contentStream.newLineAtOffset((pageWidth - textWidthBottom) / 2,
+								yMargin + (pageHeight / 2 - textHeightBottom) / 2);
 						contentStream.showText(config.getTextBottom());
 						contentStream.endText();
 					}
@@ -144,8 +151,8 @@ public class PDFPostProcess {
 						double angle = Math.atan(pageHeight / pageWidth);
 						contentStream.setTextMatrix(Matrix.getRotateInstance(angle, 0, 0));
 						float pageDiagonal = (float) Math.sqrt(Math.pow(pageHeight, 2) + Math.pow(pageWidth, 2));
-						contentStream.newLineAtOffset((pageDiagonal - textWidthMiddle) / 2, yMargin - textHeightMiddle
-								/ 2);
+						contentStream.newLineAtOffset((pageDiagonal - textWidthMiddle) / 2,
+								yMargin - textHeightMiddle / 2);
 						contentStream.showText(config.getTextMiddle());
 						contentStream.endText();
 
@@ -155,8 +162,8 @@ public class PDFPostProcess {
 						contentStream.setFont(font, config.getSizeTop());
 						// float upDiagonal = (float) Math.sqrt(Math.pow(pageHeight / 2, 2) +
 						// Math.pow(pageWidth / 2, 2));
-						contentStream.newLineAtOffset((pageDiagonal - textWidthTop) / 2, yMargin - textHeightTop / 2
-								+ pageHeight / 4);
+						contentStream.newLineAtOffset((pageDiagonal - textWidthTop) / 2,
+								yMargin - textHeightTop / 2 + pageHeight / 4);
 						contentStream.showText(config.getTextTop());
 						contentStream.endText();
 
@@ -164,8 +171,8 @@ public class PDFPostProcess {
 						contentStream.beginText();
 						contentStream.setTextMatrix(Matrix.getRotateInstance(angle, 0, 0));
 						contentStream.setFont(font, config.getSizeBottom());
-						contentStream.newLineAtOffset((pageDiagonal - textWidthBottom) / 2, yMargin - textHeightBottom
-								/ 2 - pageHeight / 4);
+						contentStream.newLineAtOffset((pageDiagonal - textWidthBottom) / 2,
+								yMargin - textHeightBottom / 2 - pageHeight / 4);
 						contentStream.showText(config.getTextBottom());
 						contentStream.endText();
 					}
@@ -210,17 +217,18 @@ public class PDFPostProcess {
 			// Add tudoToPDF "signature"
 			// String creator = doc.getDocumentInformation().getCreator() == null ? "" :
 			// doc.getDocumentInformation().getCreator();
-			String producer = doc.getDocumentInformation().getProducer() == null ? "" : doc.getDocumentInformation()
-					.getProducer();
+			String producer = doc.getDocumentInformation().getProducer() == null ? ""
+					: doc.getDocumentInformation().getProducer();
 			// doc.getDocumentInformation().setCreator(creator + " - tudoToPDF");
 			doc.getDocumentInformation().setProducer(producer + " - tudoToPDF");
 
-			ByteArrayOutputStream postProcessStream = new ByteArrayOutputStream();
-			doc.save(postProcessStream);
-			doc.close();
-			postProcessStream.close();
+			String finalOutFileName = md5PdfFile + "-" + config.hashCode() + ".pdf";
+			File finalOutputFile = new File(Config.getString("application.staticFiles"), finalOutFileName);
 
-			return new ByteArrayInputStream(postProcessStream.toByteArray());
+			doc.save(finalOutputFile);
+			doc.close();
+
+			return finalOutputFile;
 
 		} catch (Exception e) {
 			log.error("Fail to post process PDF. Document protected?", e);

@@ -1,8 +1,6 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 /**
  * Makes no conversion at all. Use with PDFs
@@ -12,9 +10,14 @@ import java.io.InputStream;
 public class NoConverter implements PDFConverter {
 
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public String getCode() {
+		return "NoConverter";
+	}
+	
+	@Override
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
-			return new FileInputStream(theFile);
+			return theFile;
 		} catch (Exception e) {
 			throw new PDFConverterException("Error in NoConverter", e);
 		}

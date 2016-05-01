@@ -24,40 +24,40 @@ public class PDFConverterFactory {
 	 */
 	public static PDFConverter createPDFConverter(String contentType, String strategy) {
 
-		if (Docx4JConverter.getCode().equals(strategy) && Docx4JConverter.isContentSupported(contentType)) {
+		if (Docx4JConverter.CODE.equals(strategy) && Docx4JConverter.isContentSupported(contentType)) {
 			return new Docx4JConverter();
 		}
 
-		if (JODConverter.getCode().equals(strategy) && JODConverter.isContentSupported(contentType)) {
+		if (JODConverter.CODE.equals(strategy) && JODConverter.isContentSupported(contentType)) {
 			return new JODConverter();
 		}
 
-		if (XDocReportConverter.getCode().equals(strategy) && XDocReportConverter.isContentSupported(contentType)) {
+		if (XDocReportConverter.CODE.equals(strategy) && XDocReportConverter.isContentSupported(contentType)) {
 			return new XDocReportConverter();
 		}
 
-		if (OfficeToPDFConverter.getCode().equals(strategy) && OfficeToPDFConverter.isContentSupported(contentType)) {
+		if (OfficeToPDFConverter.CODE.equals(strategy) && OfficeToPDFConverter.isContentSupported(contentType)) {
 			return new OfficeToPDFConverter();
 		}
 
-		if (AsposeWordsConverter.getCode().equals(strategy) && AsposeWordsConverter.isContentSupported(contentType)) {
+		if (AsposeWordsConverter.CODE.equals(strategy) && AsposeWordsConverter.isContentSupported(contentType)) {
 			return new AsposeWordsConverter();
 		}
 
-		if (PDFBoxConverter.getCode().equals(strategy) && PDFBoxConverter.isContentSupported(contentType)) {
+		if (PDFBoxConverter.CODE.equals(strategy) && PDFBoxConverter.isContentSupported(contentType)) {
 			return new PDFBoxConverter();
 		}
 
-		if (PDF2PDFOCRConverter.getCode().equals(strategy) && PDF2PDFOCRConverter.isContentSupported(contentType)) {
+		if (PDF2PDFOCRConverter.CODE.equals(strategy) && PDF2PDFOCRConverter.isContentSupported(contentType)) {
 			return new PDF2PDFOCRConverter();
 		}
-		
+
 		// At this point, PDF will be passed "as is"
 		if ("application/pdf".equals(contentType)) {
 			return new NoConverter();
 		}
-		
-		if ("Dummy".equals(strategy)) {
+
+		if (DummyPDFConverter.CODE.equals(strategy)) {
 			return new DummyPDFConverter();
 		}
 

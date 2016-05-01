@@ -15,4 +15,7 @@
 	<listener>
 		<listener-class>br.nom.leonardo.tudotopdf.servlet.WebAppContextListener</listener-class>
 	</listener>
+	<listener>
+		<listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+	</listener>
 </web-app>

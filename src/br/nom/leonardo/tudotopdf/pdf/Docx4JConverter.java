@@ -1,12 +1,10 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.docx4j.Docx4J;
 import org.docx4j.convert.out.FOSettings;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -24,11 +22,13 @@ public class Docx4JConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(Docx4JConverter.class);
 
-	private static final String CODE = "Docx4j";
+	public static final String CODE = "Docx4j";
 
-	public static String getCode() {
+	@Override
+	public String getCode() {
 		return CODE;
 	}
+
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOCX"),
 			Config.getString("mime.PPTX"), Config.getString("mime.XLSX") });
@@ -45,16 +45,17 @@ public class Docx4JConverter implements PDFConverter {
 	}
 
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 			WordprocessingMLPackage wordMLPckg = Docx4J.load(theFile);
 			FOSettings foSettings = Docx4J.createFOSettings();
 			foSettings.setWmlPackage(wordMLPckg);
-			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
+			FileOutputStream pdfStream = new FileOutputStream(outputFile);
 			Docx4J.toFO(foSettings, pdfStream, Docx4J.FLAG_EXPORT_PREFER_XSL);
 			pdfStream.close();
-			ByteArrayInputStream resultStream = new ByteArrayInputStream(pdfStream.toByteArray());
-			return resultStream;
+			return outputFile;
 		} catch (Exception e) {
 			log.error("Fail to create PDF in DOC4J Converter", e);
 			throw new PDFConverterException("Fail to create PDF in DOC4J Converter", e);

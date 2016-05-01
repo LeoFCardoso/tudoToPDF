@@ -1,9 +1,6 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -12,6 +9,8 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import br.nom.leonardo.tudotopdf.config.Config;
 
 /**
  * This is a dummy PDF converter only to test purposes. Only a single PDF dummy page is generated.
@@ -23,8 +22,14 @@ public class DummyPDFConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(DummyPDFConverter.class);
 
+	public static final String CODE = "Dummy";
+	
+	public String getCode() {
+		return CODE;
+	}
+
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 
 		try {
 			PDDocument document = new PDDocument();
@@ -38,10 +43,11 @@ public class DummyPDFConverter implements PDFConverter {
 			contentStream.showText("This is a test PDF file.");
 			contentStream.endText();
 			contentStream.close();
-			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-			document.save(pdfStream);
+			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
+			document.save(outputFile);
 			document.close();
-			return new ByteArrayInputStream(pdfStream.toByteArray());
+			return outputFile;
 		} catch (Exception e) {
 			log.error("Fail to create dummy PDF", e);
 			throw new PDFConverterException(e);

@@ -1,10 +1,7 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,8 +24,7 @@ import org.slf4j.LoggerFactory;
 import br.nom.leonardo.tudotopdf.config.Config;
 
 /**
- * Convert using PDFBox directly. Mainly used to image formats using Java Image API (Java advanced
- * imaging)
+ * Convert using PDFBox directly. Mainly used to image formats using Java Image API (Java advanced imaging)
  * 
  * @author leonardo
  *
@@ -37,15 +33,16 @@ public class PDFBoxConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(PDFBoxConverter.class);
 
-	private static final String CODE = "PDFBox";
+	public static final String CODE = "PDFBox";
 
-	public static String getCode() {
+	@Override
+	public String getCode() {
 		return CODE;
 	}
 
-	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.BMP"),
-			Config.getString("mime.GIF"), Config.getString("mime.JPG"), Config.getString("mime.PNG"),
-			Config.getString("mime.TIF") });
+	private static final List<String> SUPPORTED_MIMES = Arrays
+			.asList(new String[] { Config.getString("mime.BMP"), Config.getString("mime.GIF"),
+					Config.getString("mime.JPG"), Config.getString("mime.PNG"), Config.getString("mime.TIF") });
 
 	static boolean isContentSupported(String contentType) {
 		return SUPPORTED_MIMES.contains(contentType);
@@ -59,7 +56,7 @@ public class PDFBoxConverter implements PDFConverter {
 	}
 
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 			Tika tika = new Tika();
 			String realContentType = tika.detect(theFile);
@@ -103,16 +100,15 @@ public class PDFBoxConverter implements PDFConverter {
 				// TIFF compression (uses temporary file - TODO fix, because it's not working with
 				// all tiffs
 				/*
-				 * File tmpTiffFile = File.createTempFile("Tiff-Temp", ".tiff");
-				 * ImageIO.write(buffImage, "tiff", tmpTiffFile); PDCcitt pdfBoxImage = new
-				 * PDCcitt(doc, new RandomAccessFile(tmpTiffFile, "r"));
+				 * File tmpTiffFile = File.createTempFile("Tiff-Temp", ".tiff"); ImageIO.write(buffImage, "tiff",
+				 * tmpTiffFile); PDCcitt pdfBoxImage = new PDCcitt(doc, new RandomAccessFile(tmpTiffFile, "r"));
 				 */
 
 				PDPageContentStream contentStream = new PDPageContentStream(doc, page);
 				float scaleW = page.getArtBox().getWidth() / pdfBoxImage.getWidth();
 				float scaleH = page.getArtBox().getHeight() / pdfBoxImage.getHeight();
-				contentStream.drawImage(pdfBoxImage, 0, 0, pdfBoxImage.getWidth() * scaleW, pdfBoxImage.getHeight()
-						* scaleH);
+				contentStream.drawImage(pdfBoxImage, 0, 0, pdfBoxImage.getWidth() * scaleW,
+						pdfBoxImage.getHeight() * scaleH);
 				contentStream.close();
 
 				/*
@@ -122,10 +118,11 @@ public class PDFBoxConverter implements PDFConverter {
 				log.debug("Page {} from image generated in PDF", i + 1);
 			}
 
-			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-			doc.save(pdfStream);
+			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
+			doc.save(outputFile);
 			doc.close();
-			return new ByteArrayInputStream(pdfStream.toByteArray());
+			return outputFile;
 
 		} catch (Exception e) {
 			final String errorMsg = "Fail to create PDF in PDFBox";

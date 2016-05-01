@@ -1,19 +1,18 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.nom.leonardo.tudotopdf.config.Config;
+
 /**
- * Generic abstract class to handle file polling conversions. System must copy source file to a
- * folder and collect PDF result in another.
+ * Generic abstract class to handle file polling conversions. System must copy source file to a folder and collect PDF
+ * result in another folder.
  * 
  * @author leonardo
- *
  */
 public abstract class FilePollingConverter implements PDFConverter {
 
@@ -22,7 +21,7 @@ public abstract class FilePollingConverter implements PDFConverter {
 	private final String COPY_SUFFIX = ".part";
 
 	@Override
-	public InputStream convertPDF(File theFile) throws PDFConverterException {
+	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 
 		try {
 			String sourceFileName = theFile.getName();
@@ -44,16 +43,17 @@ public abstract class FilePollingConverter implements PDFConverter {
 			// Start look for result PDF
 			File pdfFile = new File(new File(this.getDestinationFilesFolder()), sourceFileName + ".pdf");
 			File pdfFileFinal = new File(new File(this.getDestinationFilesFolder()), sourceFileName + ".COMPLETED.pdf");
-			long timeoutMillis = 1000 * 60 * getTimeOutMinutes(); 
+			long timeoutMillis = 1000 * 60 * getTimeOutMinutes();
 			long waitMillis = 500;
 
 			int countAvoidInfinite = 0;
+			//TODO is there another way to check locked file without renaming?
 			while (!(pdfFile.exists() && (pdfFile.renameTo(pdfFileFinal)))) {
 				countAvoidInfinite++;
 				if (countAvoidInfinite > (timeoutMillis / waitMillis)) {
-					//TODO try to recover log file
-					throw new PDFConverterException("Could not find a complete PDF file. Check PDF service ("
-							+ countAvoidInfinite + ").");
+					// TODO try to recover log file
+					throw new PDFConverterException(
+							"Could not find a complete PDF file. Check PDF service (" + countAvoidInfinite + ").");
 				}
 				Thread.sleep(waitMillis);
 				log.debug("Waiting for PDF conversion to complete (" + countAvoidInfinite + "/"
@@ -61,8 +61,10 @@ public abstract class FilePollingConverter implements PDFConverter {
 			}
 
 			// This must be the returned file
-			return new FileInputStream(pdfFileFinal);
-
+			String outFileName = md5UploadedFile + "-" + getCode() + ".pdf";
+			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
+			FileUtils.copyFile(pdfFileFinal, outputFile);
+			return outputFile;
 		} catch (Exception e) {
 			String msg = "Fail to create PDF in file polling converter";
 			log.error(msg, e);

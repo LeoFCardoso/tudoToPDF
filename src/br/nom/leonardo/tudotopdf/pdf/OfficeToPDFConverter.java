@@ -14,11 +14,13 @@ import br.nom.leonardo.tudotopdf.config.Config;
  */
 public class OfficeToPDFConverter extends FilePollingConverter {
 
-	private static final String CODE = "OfficeToPDF";
+	public static final String CODE = "OfficeToPDF";
 
-	public static String getCode() {
+	@Override
+	public String getCode() {
 		return CODE;
 	}
+
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOC"),
 			Config.getString("mime.XLS"), Config.getString("mime.PPT"), Config.getString("mime.RTF"),
