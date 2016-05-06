@@ -32,7 +32,7 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(
-			new String[] { Config.getString("mime.PDF"), Config.getString("mime.JPG"), Config.getString("mime.TIF") });
+			new String[] { Config.getString("mime.PDF"), Config.getString("mime.JPG"), Config.getString("mime.TIF"), Config.getString("mime.PNG") });
 
 	static boolean isContentSupported(String contentType) {
 		return SUPPORTED_MIMES.contains(contentType);
