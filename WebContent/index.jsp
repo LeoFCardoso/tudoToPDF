@@ -43,6 +43,21 @@
 				<option value="horizontal">horizontal</option></select> transparency [1-100]:
 			<input maxlength="100" name="transparency" size="3" type="text"
 				value="50" />
+			color <select name="watermarkColor" size="1">
+			<option selected="selected" value="lightGray">lightGray</option>
+			<option value="black">black</option>
+			<option value="blue">blue</option>
+			<option value="cyan">cyan</option>
+			<option value="darkGray">darkGray</option>
+			<option value="gray">gray</option>
+			<option value="green">green</option>
+			<option value="magenta">magenta</option>
+			<option value="orange">orange</option>
+			<option value="pink">pink</option>
+			<option value="red">red</option>
+			<option value="white">white</option>
+			<option value="yellow">yellow</option>
+			</select>
 		</p>
 		<p>
 			protected: <input name="protected" type="checkbox" checked="checked" />

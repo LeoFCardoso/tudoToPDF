@@ -1,8 +1,6 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
-import java.awt.Color;
 import java.io.File;
-import java.lang.reflect.Field;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.pdfbox.cos.COSName;
@@ -111,10 +109,7 @@ public class PDFPostProcess {
 					}
 
 					// Color
-					// More Info: http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html
-					Field field = Color.class.getField("lightGray"); // TODO param the color
-					Color color = (Color) field.get(null);
-					contentStream.setNonStrokingColor(color);
+					contentStream.setNonStrokingColor(config.getWaterMarkColor());
 
 					float yMargin = 50;
 

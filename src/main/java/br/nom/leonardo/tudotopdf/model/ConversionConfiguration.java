@@ -1,5 +1,6 @@
 package br.nom.leonardo.tudotopdf.model;
 
+import java.awt.Color;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ public class ConversionConfiguration implements Serializable {
 	private String textHeader, textTop, textMiddle, textBottom, textFooter;
 	private int sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter;
 	private String waterMarkType;
+	private Color waterMarkColor;
 	/**
 	 * between 0 and 100
 	 */
@@ -27,7 +29,7 @@ public class ConversionConfiguration implements Serializable {
 
 	public ConversionConfiguration(boolean watermark, boolean protect, String textHeader, String textTop,
 			String textMiddle, String textBottom, String textFooter, int sizeHeader, int sizeTop, int sizeMiddle,
-			int sizeBottom, int sizeFooter, int transparency, String waterkMarkType) {
+			int sizeBottom, int sizeFooter, int transparency, String waterkMarkType, Color waterkMarkColor) {
 		super();
 		this.watermark = watermark;
 		this.protect = protect;
@@ -43,6 +45,7 @@ public class ConversionConfiguration implements Serializable {
 		this.sizeFooter = sizeFooter;
 		this.transparency = transparency;
 		this.waterMarkType = waterkMarkType;
+		this.waterMarkColor = waterkMarkColor;
 	}
 
 	public boolean isWatermark() {
@@ -157,6 +160,14 @@ public class ConversionConfiguration implements Serializable {
 		this.waterMarkType = waterMarkType;
 	}
 
+	public Color getWaterMarkColor() {
+		return waterMarkColor;
+	}
+
+	public void setWaterMarkColor(Color waterMarkColor) {
+		this.waterMarkColor = waterMarkColor;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -173,9 +184,10 @@ public class ConversionConfiguration implements Serializable {
 		result = prime * result + ((textMiddle == null) ? 0 : textMiddle.hashCode());
 		result = prime * result + ((textTop == null) ? 0 : textTop.hashCode());
 		result = prime * result + transparency;
+		result = prime * result + ((waterMarkColor == null) ? 0 : waterMarkColor.hashCode());
 		result = prime * result + ((waterMarkType == null) ? 0 : waterMarkType.hashCode());
 		result = prime * result + (watermark ? 1231 : 1237);
 		return result;
 	}
-
+	
 }

@@ -1,9 +1,11 @@
 package br.nom.leonardo.tudotopdf.servlet;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.UUID;
 
@@ -156,7 +158,7 @@ public class ConvertFileServlet extends HttpServlet {
 
 	}
 
-	private ConversionConfiguration buildConversionConfiguration(HttpServletRequest request) {
+	private ConversionConfiguration buildConversionConfiguration(HttpServletRequest request) throws Exception {
 		boolean isWatermarked = "on".equals(request.getParameter("watermark"));
 		log.debug("PDF will be watermarked: " + isWatermarked);
 
@@ -211,14 +213,21 @@ public class ConvertFileServlet extends HttpServlet {
 				|| !StringUtils.isNumeric(request.getParameter("transparency")) ? 50
 						: Integer.parseInt(request.getParameter("transparency"));
 		log.debug("Transparency: " + transparency);
+		
+		String wmColor = StringUtils.isBlank(request.getParameter("watermarkColor")) ? "lightGray"
+				: request.getParameter("watermarkColor");
+		log.debug("Watermark color: " + wmColor);
+		Field field = Color.class.getField(wmColor); 
+		Color waterkMarkColor = (Color) field.get(null);
 
 		ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader, textTop,
 				textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter,
-				transparency, waterkMarkType);
+				transparency, waterkMarkType, waterkMarkColor);
 		return config;
 	}
 
 	private void showError(HttpServletResponse response, String msg) {
+		// TODO better error handling with json
 		log.error(msg);
 		response.setContentType("text/plain");
 		response.setStatus(500);
