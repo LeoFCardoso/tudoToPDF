@@ -44,12 +44,14 @@ public class AppContext {
 		if (timeoutParam != null) {
 			configuration.setTaskExecutionTimeout(timeoutParam);
 		}
+		//TODO - test!
+		configuration.setMaxTasksPerProcess(1);
 	}
 
 	static void destroy() {
 		try {
 			officeManager.stop();
-			log.debug("JOD OfficeManager stoped");
+			log.debug("JOD OfficeManager stopped");
 		} catch (OfficeException e) {
 			log.debug("Fail to stop JOD Office Manager. I hope for the best...");
 		}
