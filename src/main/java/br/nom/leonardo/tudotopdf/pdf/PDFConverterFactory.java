@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.nom.leonardo.tudotopdf.config.Config;
+import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
 
 /**
  * Factory class to create PDFConverter instances
@@ -20,9 +21,11 @@ public class PDFConverterFactory {
 	 *            real content type
 	 * @param strategy
 	 *            selected strategy
+	 * @param config
+	 *            configuration for conversion
 	 * @return
 	 */
-	public static PDFConverter createPDFConverter(String contentType, String strategy) {
+	public static PDFConverter createPDFConverter(String contentType, String strategy, ConversionConfiguration config) {
 
 		if (Docx4JConverter.CODE.equals(strategy) && Docx4JConverter.isContentSupported(contentType)) {
 			return new Docx4JConverter();
@@ -49,7 +52,7 @@ public class PDFConverterFactory {
 		}
 
 		if (PDF2PDFOCRConverter.CODE.equals(strategy) && PDF2PDFOCRConverter.isContentSupported(contentType)) {
-			return new PDF2PDFOCRConverter();
+			return new PDF2PDFOCRConverter(config.getPdf2pdfocrConfig());
 		}
 
 		// At this point, PDF will be passed "as is"

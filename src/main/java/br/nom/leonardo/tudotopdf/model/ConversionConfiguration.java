@@ -16,20 +16,22 @@ public class ConversionConfiguration implements Serializable {
 	 */
 	private static final long serialVersionUID = -352432106072559106L;
 
-	private boolean watermark;
+	private Pdf2pdfocrConfiguration pdf2pdfocrConfig;
 	private boolean protect;
-	private String textHeader, textTop, textMiddle, textBottom, textFooter;
 	private int sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter;
-	private String waterMarkType;
-	private Color waterMarkColor;
+	private String textHeader, textTop, textMiddle, textBottom, textFooter;
 	/**
 	 * between 0 and 100
 	 */
 	private int transparency;
+	private boolean watermark;
+	private Color waterMarkColor;
+	private String waterMarkType;
 
 	public ConversionConfiguration(boolean watermark, boolean protect, String textHeader, String textTop,
 			String textMiddle, String textBottom, String textFooter, int sizeHeader, int sizeTop, int sizeMiddle,
-			int sizeBottom, int sizeFooter, int transparency, String waterkMarkType, Color waterkMarkColor) {
+			int sizeBottom, int sizeFooter, int transparency, String waterkMarkType, Color waterkMarkColor,
+			Pdf2pdfocrConfiguration pdf2pdfocrConfig) {
 		super();
 		this.watermark = watermark;
 		this.protect = protect;
@@ -46,126 +48,63 @@ public class ConversionConfiguration implements Serializable {
 		this.transparency = transparency;
 		this.waterMarkType = waterkMarkType;
 		this.waterMarkColor = waterkMarkColor;
+		this.pdf2pdfocrConfig = pdf2pdfocrConfig;
 	}
 
-	public boolean isWatermark() {
-		return watermark;
-	}
-
-	public void setWatermark(boolean watermark) {
-		this.watermark = watermark;
-	}
-
-	public boolean isProtect() {
-		return protect;
-	}
-
-	public void setProtect(boolean protect) {
-		this.protect = protect;
-	}
-
-	public String getTextHeader() {
-		return textHeader;
-	}
-
-	public void setTextHeader(String textHeader) {
-		this.textHeader = textHeader;
-	}
-
-	public String getTextTop() {
-		return textTop;
-	}
-
-	public void setTextTop(String textTop) {
-		this.textTop = textTop;
-	}
-
-	public String getTextMiddle() {
-		return textMiddle;
-	}
-
-	public void setTextMiddle(String textMiddle) {
-		this.textMiddle = textMiddle;
-	}
-
-	public String getTextBottom() {
-		return textBottom;
-	}
-
-	public void setTextBottom(String textBottom) {
-		this.textBottom = textBottom;
-	}
-
-	public String getTextFooter() {
-		return textFooter;
-	}
-
-	public void setTextFooter(String textFooter) {
-		this.textFooter = textFooter;
-	}
-
-	public int getSizeHeader() {
-		return sizeHeader;
-	}
-
-	public void setSizeHeader(int sizeHeader) {
-		this.sizeHeader = sizeHeader;
-	}
-
-	public int getSizeTop() {
-		return sizeTop;
-	}
-
-	public void setSizeTop(int sizeTop) {
-		this.sizeTop = sizeTop;
-	}
-
-	public int getSizeMiddle() {
-		return sizeMiddle;
-	}
-
-	public void setSizeMiddle(int sizeMiddle) {
-		this.sizeMiddle = sizeMiddle;
+	public Pdf2pdfocrConfiguration getPdf2pdfocrConfig() {
+		return pdf2pdfocrConfig;
 	}
 
 	public int getSizeBottom() {
 		return sizeBottom;
 	}
 
-	public void setSizeBottom(int sizeBottom) {
-		this.sizeBottom = sizeBottom;
-	}
-
 	public int getSizeFooter() {
 		return sizeFooter;
 	}
 
-	public void setSizeFooter(int sizeFooter) {
-		this.sizeFooter = sizeFooter;
+	public int getSizeHeader() {
+		return sizeHeader;
+	}
+
+	public int getSizeMiddle() {
+		return sizeMiddle;
+	}
+
+	public int getSizeTop() {
+		return sizeTop;
+	}
+
+	public String getTextBottom() {
+		return textBottom;
+	}
+
+	public String getTextFooter() {
+		return textFooter;
+	}
+
+	public String getTextHeader() {
+		return textHeader;
+	}
+
+	public String getTextMiddle() {
+		return textMiddle;
+	}
+
+	public String getTextTop() {
+		return textTop;
 	}
 
 	public int getTransparency() {
 		return transparency;
 	}
 
-	public void setTransparency(int transparency) {
-		this.transparency = transparency;
-	}
-
-	public String getWaterMarkType() {
-		return waterMarkType;
-	}
-
-	public void setWaterMarkType(String waterMarkType) {
-		this.waterMarkType = waterMarkType;
-	}
-
 	public Color getWaterMarkColor() {
 		return waterMarkColor;
 	}
 
-	public void setWaterMarkColor(Color waterMarkColor) {
-		this.waterMarkColor = waterMarkColor;
+	public String getWaterMarkType() {
+		return waterMarkType;
 	}
 
 	@Override
@@ -187,7 +126,80 @@ public class ConversionConfiguration implements Serializable {
 		result = prime * result + ((waterMarkColor == null) ? 0 : waterMarkColor.hashCode());
 		result = prime * result + ((waterMarkType == null) ? 0 : waterMarkType.hashCode());
 		result = prime * result + (watermark ? 1231 : 1237);
+		result = prime * result + ((pdf2pdfocrConfig == null) ? 0 : pdf2pdfocrConfig.hashCode());
 		return result;
 	}
-	
+
+	public boolean isProtect() {
+		return protect;
+	}
+
+	public boolean isWatermark() {
+		return watermark;
+	}
+
+	public void setPdf2pdfocrConfig(Pdf2pdfocrConfiguration pdf2pdfocrConfig) {
+		this.pdf2pdfocrConfig = pdf2pdfocrConfig;
+	}
+
+	public void setProtect(boolean protect) {
+		this.protect = protect;
+	}
+
+	public void setSizeBottom(int sizeBottom) {
+		this.sizeBottom = sizeBottom;
+	}
+
+	public void setSizeFooter(int sizeFooter) {
+		this.sizeFooter = sizeFooter;
+	}
+
+	public void setSizeHeader(int sizeHeader) {
+		this.sizeHeader = sizeHeader;
+	}
+
+	public void setSizeMiddle(int sizeMiddle) {
+		this.sizeMiddle = sizeMiddle;
+	}
+
+	public void setSizeTop(int sizeTop) {
+		this.sizeTop = sizeTop;
+	}
+
+	public void setTextBottom(String textBottom) {
+		this.textBottom = textBottom;
+	}
+
+	public void setTextFooter(String textFooter) {
+		this.textFooter = textFooter;
+	}
+
+	public void setTextHeader(String textHeader) {
+		this.textHeader = textHeader;
+	}
+
+	public void setTextMiddle(String textMiddle) {
+		this.textMiddle = textMiddle;
+	}
+
+	public void setTextTop(String textTop) {
+		this.textTop = textTop;
+	}
+
+	public void setTransparency(int transparency) {
+		this.transparency = transparency;
+	}
+
+	public void setWatermark(boolean watermark) {
+		this.watermark = watermark;
+	}
+
+	public void setWaterMarkColor(Color waterMarkColor) {
+		this.waterMarkColor = waterMarkColor;
+	}
+
+	public void setWaterMarkType(String waterMarkType) {
+		this.waterMarkType = waterMarkType;
+	}
+
 }

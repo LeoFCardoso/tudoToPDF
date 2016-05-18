@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import br.nom.leonardo.tudotopdf.config.Config;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
+import br.nom.leonardo.tudotopdf.pdf.PDF2PDFOCRConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverterException;
 import br.nom.leonardo.tudotopdf.pdf.PDFPostProcess;
@@ -75,6 +76,12 @@ public class PdfConversionJob implements InterruptableJob {
 		File pdfFile = null;
 
 		String outFileName = md5UploadedFile + "-" + converter.getCode() + ".pdf";
+		// TODO - create a better code to handle converter with configuration
+		if (converter instanceof PDF2PDFOCRConverter) {
+			outFileName = md5UploadedFile + "-" + converter.getCode() + "-"
+					+ ((PDF2PDFOCRConverter) converter).getPdf2pdfocrConfig().hashCode() + ".pdf";
+		}
+
 		File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 		if (outputFile.exists()) {
 			log.info("PDF already exists for this MD5 and strategy conversion. Skipping conversion.");

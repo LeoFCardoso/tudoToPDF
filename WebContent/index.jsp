@@ -42,28 +42,28 @@
 					selected="selected" value="diagonal">diagonal</option>
 				<option value="horizontal">horizontal</option></select> transparency [1-100]:
 			<input maxlength="100" name="transparency" size="3" type="text"
-				value="50" />
-			color <select name="watermarkColor" size="1">
-			<option selected="selected" value="lightGray">lightGray</option>
-			<option value="black">black</option>
-			<option value="blue">blue</option>
-			<option value="cyan">cyan</option>
-			<option value="darkGray">darkGray</option>
-			<option value="gray">gray</option>
-			<option value="green">green</option>
-			<option value="magenta">magenta</option>
-			<option value="orange">orange</option>
-			<option value="pink">pink</option>
-			<option value="red">red</option>
-			<option value="white">white</option>
-			<option value="yellow">yellow</option>
+				value="50" /> color <select name="watermarkColor" size="1">
+				<option selected="selected" value="lightGray">lightGray</option>
+				<option value="black">black</option>
+				<option value="blue">blue</option>
+				<option value="cyan">cyan</option>
+				<option value="darkGray">darkGray</option>
+				<option value="gray">gray</option>
+				<option value="green">green</option>
+				<option value="magenta">magenta</option>
+				<option value="orange">orange</option>
+				<option value="pink">pink</option>
+				<option value="red">red</option>
+				<option value="white">white</option>
+				<option value="yellow">yellow</option>
 			</select>
 		</p>
 		<p>
 			protected: <input name="protected" type="checkbox" checked="checked" />
 		</p>
 		<p>
-			strategy: <select name="strategy" size="1">
+			strategy: <select id="slcStrategy" name="strategy" size="1"
+				onchange="handleStrategyChange();">
 				<option value="<%=Docx4JConverter.CODE%>">Docx4J (<%=StringUtils.join(Docx4JConverter.supportedExtensions(), ',')%>)
 				</option>
 				<option value="<%=JODConverter.CODE%>">JOD (<%=StringUtils.join(JODConverter.supportedExtensions(), ',')%>)
@@ -88,6 +88,36 @@
 			--%>
 			</select>
 		</p>
+
+		<!-- Custom options for pdf2pdfocr strategy -->
+		<div id="pdf2pdfocrOptions" style="display: none;">
+			<p>PDF2PDFOCR Specific Options:</p>
+			<p>
+				--> Does not process if source already has text: <input
+					name="pdf2pdfocr_flag_t" type="checkbox" checked="checked" />
+			</p>
+			<p>
+				--> Does not process if source is protected: <input
+					name="pdf2pdfocr_flag_a" type="checkbox" />
+			</p>
+			<p>
+				--> Force PDF rebuild from images (re-encode): <input
+					name="pdf2pdfocr_flag_f" type="checkbox" />
+			</p>
+			<p>
+				--> When re-encoding, use this option (fast, best, grayscale, jpeg or custom): <input
+					maxlength="200" name="pdf2pdfocr_flag_g_value" size="50"
+					type="text" value="best" />
+			</p>
+			<p>
+				--> Deskew before OCR: <input name="pdf2pdfocr_flag_d"
+					type="checkbox" /> with threshold of <input maxlength="4"
+					name="pdf2pdfocr_flag_d_value" size="5" type="text" value="40%" />
+			</p>
+			<p>
+				--> Force PDFTK use: <input name="pdf2pdfocr_flag_p" type="checkbox" />
+			</p>
+		</div>
 
 		<p>
 			header: <input maxlength="100" name="headerWmText" size="30"
@@ -130,5 +160,16 @@
 		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="js/bootstrap.min.js"></script>
+		<script>
+		<!-- local javascript options -->
+			function handleStrategyChange() {
+				if ($("#slcStrategy").val() == "PDF2PDFOCR") {
+					$("#pdf2pdfocrOptions").show();
+				} else {
+					$("#pdf2pdfocrOptions").hide();
+				}
+			}
+			$(window).load(handleStrategyChange);
+		</script>
 </body>
 </html>

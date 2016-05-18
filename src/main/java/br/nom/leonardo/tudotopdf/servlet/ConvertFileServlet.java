@@ -35,6 +35,7 @@ import br.nom.leonardo.tudotopdf.config.Config;
 import br.nom.leonardo.tudotopdf.job.JobStatus;
 import br.nom.leonardo.tudotopdf.job.PdfConversionJob;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
+import br.nom.leonardo.tudotopdf.model.Pdf2pdfocrConfiguration;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverterFactory;
 
@@ -105,7 +106,7 @@ public class ConvertFileServlet extends HttpServlet {
 
 			ConversionConfiguration config = buildConversionConfiguration(request);
 
-			PDFConverter converter = PDFConverterFactory.createPDFConverter(realContentType, strategy);
+			PDFConverter converter = PDFConverterFactory.createPDFConverter(realContentType, strategy, config);
 			if (converter == null) {
 				showError(response, "Invalid strategy for mime type " + realContentType);
 				return;
@@ -220,9 +221,48 @@ public class ConvertFileServlet extends HttpServlet {
 		Field field = Color.class.getField(wmColor); 
 		Color waterkMarkColor = (Color) field.get(null);
 
+		Pdf2pdfocrConfiguration pdf2pdfocrConfig = null;
+		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? ""
+				: request.getParameter("strategy");
+		if ("PDF2PDFOCR".equals(strategy)) {
+			pdf2pdfocrConfig = new Pdf2pdfocrConfiguration();
+			
+			boolean flagT = "on".equals(request.getParameter("pdf2pdfocr_flag_t"));
+			log.debug("PDF2PDFOcr - flag T: " + flagT);
+			pdf2pdfocrConfig.setFlagT(flagT);
+			
+			boolean flagA = "on".equals(request.getParameter("pdf2pdfocr_flag_a"));
+			log.debug("PDF2PDFOcr - flag A: " + flagA);
+			pdf2pdfocrConfig.setFlagA(flagA);
+			
+			boolean flagF = "on".equals(request.getParameter("pdf2pdfocr_flag_f"));
+			log.debug("PDF2PDFOcr - flag F: " + flagF);
+			pdf2pdfocrConfig.setFlagF(flagF);
+
+			String flagGValue = StringUtils.isBlank(request.getParameter("pdf2pdfocr_flag_g_value")) ? ""
+					: request.getParameter("pdf2pdfocr_flag_g_value");
+			log.debug("PDF2PDFOcr - flag G Value: " + flagGValue);
+			pdf2pdfocrConfig.setFlagGValue(flagGValue);
+			
+			boolean flagD = "on".equals(request.getParameter("pdf2pdfocr_flag_d"));
+			log.debug("PDF2PDFOcr - flag D: " + flagD);
+			pdf2pdfocrConfig.setFlagD(flagD);
+			
+			String flagDValue = StringUtils.isBlank(request.getParameter("pdf2pdfocr_flag_d_value")) ? ""
+					: request.getParameter("pdf2pdfocr_flag_d_value");
+			log.debug("PDF2PDFOcr - flag D Value: " + flagDValue);
+			pdf2pdfocrConfig.setFlagDValue(flagDValue);
+			
+			boolean flagP = "on".equals(request.getParameter("pdf2pdfocr_flag_p"));
+			log.debug("PDF2PDFOcr - flag P: " + flagP);
+			pdf2pdfocrConfig.setFlagP(flagP);
+			
+		}
+		
 		ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader, textTop,
 				textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter,
-				transparency, waterkMarkType, waterkMarkColor);
+				transparency, waterkMarkType, waterkMarkColor, pdf2pdfocrConfig);
+		
 		return config;
 	}
 

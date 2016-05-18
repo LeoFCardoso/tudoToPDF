@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.nom.leonardo.tudotopdf.config.Config;
+import br.nom.leonardo.tudotopdf.model.Pdf2pdfocrConfiguration;
 
 /**
  * Convert using PDF2PDFOCR script Results in searchable PDF's.
@@ -25,14 +26,19 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 
 	public static final String CODE = "PDF2PDFOCR";
 
+	private Pdf2pdfocrConfiguration pdf2pdfocrConfig;
+
+	public PDF2PDFOCRConverter(Pdf2pdfocrConfiguration pdf2pdfocrConfig) {
+		this.pdf2pdfocrConfig = pdf2pdfocrConfig;
+	}
+
 	@Override
 	public String getCode() {
 		return CODE;
 	}
 
-
-	private static final List<String> SUPPORTED_MIMES = Arrays.asList(
-			new String[] { Config.getString("mime.PDF"), Config.getString("mime.JPG"), Config.getString("mime.TIF"), Config.getString("mime.PNG") });
+	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.PDF"),
+			Config.getString("mime.JPG"), Config.getString("mime.TIF"), Config.getString("mime.PNG") });
 
 	static boolean isContentSupported(String contentType) {
 		return SUPPORTED_MIMES.contains(contentType);
@@ -53,13 +59,43 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			// https://github.com/LeoFCardoso/pdf2pdfocr
 
 			// This will be the output file from script.
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = md5UploadedFile + "-" + CODE + "-" + pdf2pdfocrConfig.hashCode() + ".pdf";
+
 			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 
-			// Run the script
 			List<String> command = new ArrayList<String>();
 			command.add(Config.getString("pdf2pdfocr.scriptPath"));
-			command.add("-t"); // Using safe text mode. Does not process if original PDF already contains text
+
+			if (pdf2pdfocrConfig.isFlagT()) {
+				command.add("-t");
+			}
+
+			if (pdf2pdfocrConfig.isFlagA()) {
+				command.add("-a");
+			}
+
+			if (pdf2pdfocrConfig.isFlagF()) {
+				command.add("-f");
+			}
+
+			if ((!"".equals(pdf2pdfocrConfig.getFlagGValue())) && (pdf2pdfocrConfig.getFlagGValue() != null)) {
+				command.add("-g");
+				command.add(pdf2pdfocrConfig.getFlagGValue());
+			}
+
+			if (pdf2pdfocrConfig.isFlagD()) {
+				command.add("-d");
+				command.add(pdf2pdfocrConfig.getFlagDValue());
+			}
+
+			if (pdf2pdfocrConfig.isFlagP()) {
+				command.add("-p");
+			}
+
+			//DEBUG
+			//command.add("-u");
+			
+			// Fixed commands
 			command.add("-o");
 			command.add(pdfOutput.getAbsolutePath());
 			command.add(theFile.getAbsolutePath());
@@ -93,5 +129,13 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			throw new PDFConverterException(errorMsg, e);
 		}
 
+	}
+
+	public Pdf2pdfocrConfiguration getPdf2pdfocrConfig() {
+		return pdf2pdfocrConfig;
+	}
+
+	public void setPdf2pdfocrConfig(Pdf2pdfocrConfiguration pdf2pdfocrConfig) {
+		this.pdf2pdfocrConfig = pdf2pdfocrConfig;
 	}
 }
