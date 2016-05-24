@@ -1,6 +1,7 @@
 package br.nom.leonardo.tudotopdf.pdf;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -92,9 +93,9 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 				command.add("-p");
 			}
 
-			//DEBUG
-			//command.add("-u");
-			
+			// DEBUG
+			// command.add("-u");
+
 			// Fixed commands
 			command.add("-o");
 			command.add(pdfOutput.getAbsolutePath());
@@ -111,19 +112,20 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			builder.directory(new File(Config.getString("pdf2pdfocr.workDir")));
 
 			final Process process = builder.start();
+			process.waitFor();
 			String outputFromScript = IOUtils.toString(process.getInputStream());
 			String errorFromScript = IOUtils.toString(process.getErrorStream());
 			log.info("pdf2pdfocr.sh ended with stdout {} and stderr {}.", outputFromScript, errorFromScript);
 
 			if (process.exitValue() != 0) {
 				pdfOutput.delete();
-				log.error("Fail to OCR when post process PDF.");
-				throw new PDFConverterException("Fail to OCR when post process PDF. Please see logs.");
+				log.error("Fail in PDF2PDFOCR");
+				throw new PDFConverterException("Fail in PDF2PDFOCR: " + errorFromScript);
 			}
 
 			return pdfOutput;
 
-		} catch (Exception e) {
+		} catch (IOException | InterruptedException e) {
 			final String errorMsg = "Fail to create PDF in PDF2PDFOCR";
 			log.error(errorMsg, e);
 			throw new PDFConverterException(errorMsg, e);

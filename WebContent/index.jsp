@@ -105,9 +105,13 @@
 					name="pdf2pdfocr_flag_f" type="checkbox" />
 			</p>
 			<p>
-				--> When re-encoding, use this option (fast, best, grayscale, jpeg or custom): <input
-					maxlength="200" name="pdf2pdfocr_flag_g_value" size="50"
-					type="text" value="best" />
+				--> When re-encoding, use this option (<a href="#"
+					onclick="handleEncodingOption('fast')">fast</a>, <a href="#"
+					onclick="handleEncodingOption('best')">best</a>, <a href="#"
+					onclick="handleEncodingOption('grayscale')">grayscale</a>, <a
+					href="#" onclick="handleEncodingOption('jpeg')">jpeg</a> or
+				custom): <input maxlength="200" id="pdf2pdfocr_flag_g_value"
+					name="pdf2pdfocr_flag_g_value" size="50" type="text" value="best" />
 			</p>
 			<p>
 				--> Deskew before OCR: <input name="pdf2pdfocr_flag_d"
@@ -162,6 +166,10 @@
 		<script src="js/bootstrap.min.js"></script>
 		<script>
 		<!-- local javascript options -->
+			function handleEncodingOption(value) {
+				$("#pdf2pdfocr_flag_g_value").val(value)
+			}
+
 			function handleStrategyChange() {
 				if ($("#slcStrategy").val() == "PDF2PDFOCR") {
 					$("#pdf2pdfocrOptions").show();

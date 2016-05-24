@@ -66,6 +66,7 @@ public class PdfConversionJob implements InterruptableJob {
 			context.getJobDetail().getJobDataMap().put("p_finalFile", finalPDFFile);
 		} catch (Exception e) {
 			log.error("PDF conversion error", e);
+			context.getJobDetail().getJobDataMap().put("p_exception", e);
 		}
 		log.info("Ended.");
 		context.getJobDetail().getJobDataMap().put("p_status", JobStatus.ENDED);
@@ -76,7 +77,7 @@ public class PdfConversionJob implements InterruptableJob {
 		File pdfFile = null;
 
 		String outFileName = md5UploadedFile + "-" + converter.getCode() + ".pdf";
-		// TODO - create a better code to handle converter with configuration
+		// TODO - create a better code to handle converters with configuration like PDF2PDFOCR
 		if (converter instanceof PDF2PDFOCRConverter) {
 			outFileName = md5UploadedFile + "-" + converter.getCode() + "-"
 					+ ((PDF2PDFOCRConverter) converter).getPdf2pdfocrConfig().hashCode() + ".pdf";

@@ -50,15 +50,24 @@ public class AsyncResultServlet extends HttpServlet {
 			} else {
 				JobStatus status = (JobStatus) job.getJobDataMap().get("p_status");
 				boolean jobEnded = (status == JobStatus.ENDED);
+				Exception jobException = (Exception) job.getJobDataMap().get("p_exception");
+				boolean jobWithException = (jobException != null);
 				if (jobEnded) {
-					// Send redirect to finalPDFFile
-					// With Tomcat, please read:
-					// http://www.moreofless.co.uk/static-content-web-pages-images-tomcat-outside-war/
-					String protocol = request.getScheme();
-					String host = request.getServerName() + ":" + request.getServerPort();
-					String staticContext = Config.getString("application.staticContext");
-					File finalPDFFile = (File) job.getJobDataMap().get("p_finalFile");
-					response.sendRedirect(protocol + "://" + host + staticContext + "/" + finalPDFFile.getName());
+					if (jobWithException) {
+						response.setContentType("application/json");
+						PrintWriter out = response.getWriter();
+						out.print("{ result: 'ERROR', msg: '" + jobException.getMessage() + "' }");
+						out.close();
+					} else {
+						// Send redirect to finalPDFFile
+						// With Tomcat, please read:
+						// http://www.moreofless.co.uk/static-content-web-pages-images-tomcat-outside-war/
+						String protocol = request.getScheme();
+						String host = request.getServerName() + ":" + request.getServerPort();
+						String staticContext = Config.getString("application.staticContext");
+						File finalPDFFile = (File) job.getJobDataMap().get("p_finalFile");
+						response.sendRedirect(protocol + "://" + host + staticContext + "/" + finalPDFFile.getName());
+					}
 				} else {
 					response.setContentType("application/json");
 					PrintWriter out = response.getWriter();
@@ -68,7 +77,7 @@ public class AsyncResultServlet extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			log.error("Unexpected exception generating test message.", e);
+			log.error("Unexpected exception. :(", e);
 		}
 	}
 
