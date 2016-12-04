@@ -56,7 +56,7 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 
-			// Call pdf2pdfocr.sh script
+			// Call pdf2pdfocr.py script
 			// https://github.com/LeoFCardoso/pdf2pdfocr
 
 			// This will be the output file from script.
@@ -93,12 +93,10 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 				command.add("-p");
 			}
 
-			// DEBUG
-			// command.add("-u");
-
 			// Fixed commands
 			command.add("-o");
 			command.add(pdfOutput.getAbsolutePath());
+			command.add("-i");			
 			command.add(theFile.getAbsolutePath());
 
 			ProcessBuilder builder = new ProcessBuilder(command);

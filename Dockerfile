@@ -19,12 +19,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	git \
 	libapr1 \
 	libapr1-dev \
-	libreoffice \ 
-	libssl-dev \
+	libreoffice libssl-dev \
 	make \
 	maven \
-	openjdk-7-jdk \	
-	rsync \
+	openjdk-8-jdk rsync \
 	software-properties-common
 
 # Add multiverse source for corefonts
@@ -42,9 +40,9 @@ WORKDIR $CATALINA_HOME
 
 ENV TOMCAT_MAJOR 7
 ENV TOMCAT_VERSION 7.0.69
-ENV TOMCAT_TGZ_URL https://www.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+ENV TOMCAT_TGZ_URL https://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
 RUN set -x \
 	\
