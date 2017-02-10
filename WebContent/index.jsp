@@ -105,6 +105,11 @@
 					name="pdf2pdfocr_flag_f" type="checkbox" />
 			</p>
 			<p>
+				--> Image resolution in DPI before OCR:
+				    <input maxlength="5" id="pdf2pdfocr_flag_r_value"
+					name="pdf2pdfocr_flag_r_value" size="10" type="text" value="300" />
+			</p>
+			<p>
 				--> When re-encoding, use this option (<a href="#"
 					onclick="handleEncodingOption('fast')">fast</a>, <a href="#"
 					onclick="handleEncodingOption('best')">best</a>, <a href="#"
@@ -118,6 +123,14 @@
 					type="checkbox" /> with threshold of <input maxlength="4"
 					name="pdf2pdfocr_flag_d_value" size="5" type="text" value="40%" />
 			</p>
+			<p>
+				--> Autorotate: <input name="pdf2pdfocr_flag_u" type="checkbox" />
+			</p>
+			<p>
+			    --> Text generation strategy <select id="pdf2pdfocr_flag_e" name="pdf2pdfocr_flag_e_value" size="1">
+				<option selected="selected" value="tesseract">tesseract</option>
+				<option                     value="native">native</option>
+			</select>
 			<p>
 				--> Force PDFTK use: <input name="pdf2pdfocr_flag_p" type="checkbox" />
 			</p>

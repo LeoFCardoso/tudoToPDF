@@ -256,6 +256,20 @@ public class ConvertFileServlet extends HttpServlet {
 			boolean flagP = "on".equals(request.getParameter("pdf2pdfocr_flag_p"));
 			log.debug("PDF2PDFOcr - flag P: " + flagP);
 			pdf2pdfocrConfig.setFlagP(flagP);
+
+			String flagRValue = StringUtils.isBlank(request.getParameter("pdf2pdfocr_flag_r_value")) ? ""
+					: request.getParameter("pdf2pdfocr_flag_r_value");
+			log.debug("PDF2PDFOcr - flag R Value: " + flagRValue);
+			pdf2pdfocrConfig.setFlagRValue(flagRValue);
+			
+			boolean flagU = "on".equals(request.getParameter("pdf2pdfocr_flag_u"));
+			log.debug("PDF2PDFOcr - flag U: " + flagU);
+			pdf2pdfocrConfig.setFlagU(flagU);
+
+			String flagEValue = StringUtils.isBlank(request.getParameter("pdf2pdfocr_flag_e_value")) ? ""
+					: request.getParameter("pdf2pdfocr_flag_e_value");
+			log.debug("PDF2PDFOcr - flag E Value: " + flagEValue);
+			pdf2pdfocrConfig.setFlagEValue(flagEValue);
 			
 		}
 		

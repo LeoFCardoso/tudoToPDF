@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Config {
 
-	public static String VERSION = "0.6.0";
+	public static String VERSION = "0.6.1";
 	
 	private static Logger log = LoggerFactory.getLogger(Config.class);
 

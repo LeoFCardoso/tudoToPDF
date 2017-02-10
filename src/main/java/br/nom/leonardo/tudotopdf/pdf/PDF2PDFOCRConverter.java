@@ -89,6 +89,20 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 				command.add(pdf2pdfocrConfig.getFlagDValue());
 			}
 
+			if (pdf2pdfocrConfig.isFlagU()) {
+				command.add("-u");
+			}
+			
+			if ((!"".equals(pdf2pdfocrConfig.getFlagEValue())) && (pdf2pdfocrConfig.getFlagEValue() != null)) {
+				command.add("-e");
+				command.add(pdf2pdfocrConfig.getFlagEValue());
+			}
+			
+			if ((!"".equals(pdf2pdfocrConfig.getFlagRValue())) && (pdf2pdfocrConfig.getFlagRValue() != null)) {
+				command.add("-r");
+				command.add(pdf2pdfocrConfig.getFlagRValue());
+			}
+						
 			if (pdf2pdfocrConfig.isFlagP()) {
 				command.add("-p");
 			}
