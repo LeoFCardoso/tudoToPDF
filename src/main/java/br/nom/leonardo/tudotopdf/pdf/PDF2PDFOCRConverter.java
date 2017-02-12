@@ -2,6 +2,7 @@ package br.nom.leonardo.tudotopdf.pdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -59,7 +60,7 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			// Call pdf2pdfocr.py script
 			// https://github.com/LeoFCardoso/pdf2pdfocr
 
-			// This will be the output file from script.
+			// This will be the output file from script. TODO - remove hardcode and introduce a parameter
 			String outFileName = md5UploadedFile + "-" + CODE + "-" + pdf2pdfocrConfig.hashCode() + ".pdf";
 
 			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
@@ -92,17 +93,17 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			if (pdf2pdfocrConfig.isFlagU()) {
 				command.add("-u");
 			}
-			
+
 			if ((!"".equals(pdf2pdfocrConfig.getFlagEValue())) && (pdf2pdfocrConfig.getFlagEValue() != null)) {
 				command.add("-e");
 				command.add(pdf2pdfocrConfig.getFlagEValue());
 			}
-			
+
 			if ((!"".equals(pdf2pdfocrConfig.getFlagRValue())) && (pdf2pdfocrConfig.getFlagRValue() != null)) {
 				command.add("-r");
 				command.add(pdf2pdfocrConfig.getFlagRValue());
 			}
-						
+
 			if (pdf2pdfocrConfig.isFlagP()) {
 				command.add("-p");
 			}
@@ -110,7 +111,7 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			// Fixed commands
 			command.add("-o");
 			command.add(pdfOutput.getAbsolutePath());
-			command.add("-i");			
+			command.add("-i");
 			command.add(theFile.getAbsolutePath());
 
 			ProcessBuilder builder = new ProcessBuilder(command);
@@ -125,8 +126,8 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 
 			final Process process = builder.start();
 			process.waitFor();
-			String outputFromScript = IOUtils.toString(process.getInputStream());
-			String errorFromScript = IOUtils.toString(process.getErrorStream());
+			String outputFromScript = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
+			String errorFromScript = IOUtils.toString(process.getErrorStream(), Charset.defaultCharset());
 			log.info("pdf2pdfocr.sh ended with stdout {} and stderr {}.", outputFromScript, errorFromScript);
 
 			if (process.exitValue() != 0) {

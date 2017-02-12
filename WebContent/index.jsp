@@ -6,7 +6,7 @@
 <%@page import="br.nom.leonardo.tudotopdf.pdf.OfficeToPDFConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.XDocReportConverter"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.Docx4JConverter"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="br.nom.leonardo.tudotopdf.pdf.JODConverter"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -105,9 +105,9 @@
 					name="pdf2pdfocr_flag_f" type="checkbox" />
 			</p>
 			<p>
-				--> Image resolution in DPI before OCR:
-				    <input maxlength="5" id="pdf2pdfocr_flag_r_value"
-					name="pdf2pdfocr_flag_r_value" size="10" type="text" value="300" />
+				--> Image resolution in DPI before OCR: <input maxlength="5"
+					id="pdf2pdfocr_flag_r_value" name="pdf2pdfocr_flag_r_value"
+					size="10" type="text" value="300" />
 			</p>
 			<p>
 				--> When re-encoding, use this option (<a href="#"
@@ -127,12 +127,39 @@
 				--> Autorotate: <input name="pdf2pdfocr_flag_u" type="checkbox" />
 			</p>
 			<p>
-			    --> Text generation strategy <select id="pdf2pdfocr_flag_e" name="pdf2pdfocr_flag_e_value" size="1">
-				<option selected="selected" value="tesseract">tesseract</option>
-				<option                     value="native">native</option>
-			</select>
+				--> Text generation strategy <select id="pdf2pdfocr_flag_e"
+					name="pdf2pdfocr_flag_e_value" size="1">
+					<option selected="selected" value="tesseract">tesseract</option>
+					<option value="native">native</option>
+				</select>
 			<p>
 				--> Force PDFTK use: <input name="pdf2pdfocr_flag_p" type="checkbox" />
+			</p>
+		</div>
+
+		<!-- Custom options for pdfbox strategy -->
+		<div id="pdfboxOptions" style="display: none;">
+			<p>PDFBox Specific Options:</p>
+			<p>
+				--> Page size: <select id="pdfbox_pagesize"
+					name="pdfbox_pagesize_value" size="1">
+					<option selected="selected" value="A4">A4</option>
+					<option value="LETTER">LETTER</option>
+					<option value="LEGAL">LEGAL</option>
+					<option value="A2">A2</option>
+					<option value="A3">A3</option>
+					<option value="A5">A5</option>
+					<option value="A6">A6</option>
+					<option value="IMAGE">IMAGE size</option>
+				</select>
+			</p>
+			<p>
+				--> Image width: <input maxlength="5" id="pdfbox_width"
+					name="pdfbox_width_value" size="10" type="text" value="" /> cm
+			</p>
+			<p>
+				--> Image height: <input maxlength="5" id="pdfbox_height"
+					name="pdfbox_height_value" size="10" type="text" value="" /> cm
 			</p>
 		</div>
 
@@ -188,6 +215,11 @@
 					$("#pdf2pdfocrOptions").show();
 				} else {
 					$("#pdf2pdfocrOptions").hide();
+				}
+				if ($("#slcStrategy").val() == "PDFBox") {
+					$("#pdfboxOptions").show();
+				} else {
+					$("#pdfboxOptions").hide();
 				}
 			}
 			$(window).load(handleStrategyChange);

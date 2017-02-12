@@ -94,7 +94,7 @@ RUN rm -rf jodconverter/
 COPY . /root/tudoToPDF
 WORKDIR /root/tudoToPDF
 RUN mvn clean && mvn install
-RUN mv /root/tudoToPDF/target/tudoToPDF-0.6.0-SNAPSHOT.war /usr/local/tomcat/webapps/tudoToPDF.war
+RUN mv /root/tudoToPDF/target/tudoToPDF-0.6.2-SNAPSHOT.war /usr/local/tomcat/webapps/tudoToPDF.war
 
 # Copy configuration
 RUN mkdir /opt/leo

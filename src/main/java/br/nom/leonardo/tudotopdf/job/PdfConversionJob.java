@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import br.nom.leonardo.tudotopdf.config.Config;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
 import br.nom.leonardo.tudotopdf.pdf.PDF2PDFOCRConverter;
+import br.nom.leonardo.tudotopdf.pdf.PDFBoxConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverterException;
 import br.nom.leonardo.tudotopdf.pdf.PDFPostProcess;
@@ -78,9 +79,14 @@ public class PdfConversionJob implements InterruptableJob {
 
 		String outFileName = md5UploadedFile + "-" + converter.getCode() + ".pdf";
 		// TODO - create a better code to handle converters with configuration like PDF2PDFOCR
+		// TODO - remove manual filename creation on special converters! :(
 		if (converter instanceof PDF2PDFOCRConverter) {
 			outFileName = md5UploadedFile + "-" + converter.getCode() + "-"
 					+ ((PDF2PDFOCRConverter) converter).getPdf2pdfocrConfig().hashCode() + ".pdf";
+		}
+		if (converter instanceof PDFBoxConverter) {
+			outFileName = md5UploadedFile + "-" + converter.getCode() + "-"
+					+ ((PDFBoxConverter) converter).getPdfboxConfig().hashCode() + ".pdf";
 		}
 
 		File outputFile = new File(Config.getString("application.staticFiles"), outFileName);

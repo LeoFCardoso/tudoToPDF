@@ -3,9 +3,10 @@ package br.nom.leonardo.tudotopdf.config;
 import java.io.File;
 import java.util.Iterator;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.DefaultConfigurationBuilder;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Config {
 
-	public static String VERSION = "0.6.1";
-	
+	public static String VERSION = "0.6.2";
+
 	private static Logger log = LoggerFactory.getLogger(Config.class);
 
 	private static Configuration config = null;
@@ -36,7 +37,7 @@ public class Config {
 	}
 
 	public static int[] getIntArray(String param) {
-		String[] values =  config.getStringArray(param);
+		String[] values = config.getStringArray(param);
 		int[] result = new int[values.length];
 		for (int i = 0; i < values.length; i++) {
 			String value = values[i];
@@ -48,16 +49,16 @@ public class Config {
 	public static Iterator<String> getKeys(String prefix) {
 		return config.getKeys(prefix);
 	}
-	
+
 	static {
 		try {
-			DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-			builder.setFile(new File("config.xml"));
-			config = builder.getConfiguration(true);
+			Parameters params = new Parameters();
+			CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder()
+					.configure(params.fileBased().setFile(new File("config.xml")));
+			config = builder.getConfiguration();
 		} catch (ConfigurationException e) {
 			log.error("Configuration could not be done. This app can't run. Please check 'config.xml' file.", e);
 		}
 	}
-
 
 }

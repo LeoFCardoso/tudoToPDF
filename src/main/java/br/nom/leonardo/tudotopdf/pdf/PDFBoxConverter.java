@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.nom.leonardo.tudotopdf.config.Config;
+import br.nom.leonardo.tudotopdf.model.PdfboxConfiguration;
 
 /**
  * Convert using PDFBox directly. Mainly used to image formats using Java Image API (Java advanced imaging)
@@ -32,6 +33,12 @@ import br.nom.leonardo.tudotopdf.config.Config;
 public class PDFBoxConverter implements PDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(PDFBoxConverter.class);
+
+	private PdfboxConfiguration pdfboxConfig;
+
+	public PDFBoxConverter(PdfboxConfiguration pdfboxConfig) {
+		this.pdfboxConfig = pdfboxConfig;
+	}
 
 	public static final String CODE = "PDFBox";
 
@@ -82,11 +89,38 @@ public class PDFBoxConverter implements PDFConverter {
 
 				BufferedImage buffImage = imgReader.read(i);
 
-				// This code use fixed page size
-				// PDPage page = new PDPage(PDPage.PAGE_SIZE_A4);
+				PDPage page = null;
+				switch (pdfboxConfig.getPageSize()) {
+				case "LETTER":
+					page = new PDPage(PDRectangle.LETTER);
+					break;
+				case "LEGAL":
+					page = new PDPage(PDRectangle.LEGAL);
+					break;
+				case "A2":
+					page = new PDPage(PDRectangle.A2);
+					break;
+				case "A3":
+					page = new PDPage(PDRectangle.A3);
+					break;
+				case "A4":
+					page = new PDPage(PDRectangle.A4);
+					break;
+				case "A5":
+					page = new PDPage(PDRectangle.A5);
+					break;
+				case "A6":
+					page = new PDPage(PDRectangle.A6);
+					break;
+				case "IMAGE":
+					page = new PDPage(new PDRectangle(buffImage.getWidth(), buffImage.getHeight()));
+					break;
 
-				// This code creates a page with image size
-				PDPage page = new PDPage(new PDRectangle(buffImage.getWidth(), buffImage.getHeight()));
+				default:
+					page = new PDPage(PDRectangle.A4);
+					break;
+				}
+
 				doc.addPage(page);
 
 				PDImageXObject pdfBoxImage = null;
@@ -104,11 +138,36 @@ public class PDFBoxConverter implements PDFConverter {
 				 * tmpTiffFile); PDCcitt pdfBoxImage = new PDCcitt(doc, new RandomAccessFile(tmpTiffFile, "r"));
 				 */
 
+				float inch = 72.0f;
+				float cm = inch / 2.54f;
+
 				PDPageContentStream contentStream = new PDPageContentStream(doc, page);
-				float scaleW = page.getArtBox().getWidth() / pdfBoxImage.getWidth();
-				float scaleH = page.getArtBox().getHeight() / pdfBoxImage.getHeight();
-				contentStream.drawImage(pdfBoxImage, 0, 0, pdfBoxImage.getWidth() * scaleW,
-						pdfBoxImage.getHeight() * scaleH);
+
+				Float imageWidth = "".equals(pdfboxConfig.getWidthCm()) ? null
+						: Float.parseFloat(pdfboxConfig.getWidthCm()) * cm;
+				Float imageHeight = "".equals(pdfboxConfig.getHeightCm()) ? null
+						: Float.parseFloat(pdfboxConfig.getHeightCm()) * cm;
+
+				float imageWidthHeighRatio = (float) pdfBoxImage.getWidth() / pdfBoxImage.getHeight();
+				if (imageWidth == null && imageHeight != null) {
+					imageWidth = imageHeight * imageWidthHeighRatio;
+				}
+				if (imageHeight == null && imageWidth != null) {
+					imageHeight = imageWidth / imageWidthHeighRatio;
+				}
+				if (imageWidth == null && imageHeight == null) {
+					// full page
+					imageWidth = page.getCropBox().getWidth();
+					imageHeight = page.getCropBox().getHeight();
+				}
+
+				int x = 0;
+				x = (int) ((page.getCropBox().getWidth() - imageWidth) / 2);
+				int y = 0;
+				y = (int) ((page.getCropBox().getHeight() - imageHeight) / 2);
+
+				contentStream.drawImage(pdfBoxImage, x, y, imageWidth, imageHeight);
+
 				contentStream.close();
 
 				/*
@@ -118,7 +177,8 @@ public class PDFBoxConverter implements PDFConverter {
 				log.debug("Page {} from image generated in PDF", i + 1);
 			}
 
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = md5UploadedFile + "-" + CODE + "-" + pdfboxConfig.hashCode() + ".pdf";
+
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			doc.save(outputFile);
 			doc.close();
@@ -131,4 +191,13 @@ public class PDFBoxConverter implements PDFConverter {
 		}
 
 	}
+
+	public PdfboxConfiguration getPdfboxConfig() {
+		return pdfboxConfig;
+	}
+
+	public void setPdfboxConfig(PdfboxConfiguration pdfboxConfig) {
+		this.pdfboxConfig = pdfboxConfig;
+	}
+
 }

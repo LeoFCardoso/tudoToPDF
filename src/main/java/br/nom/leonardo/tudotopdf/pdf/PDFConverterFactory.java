@@ -48,7 +48,7 @@ public class PDFConverterFactory {
 		}
 
 		if (PDFBoxConverter.CODE.equals(strategy) && PDFBoxConverter.isContentSupported(contentType)) {
-			return new PDFBoxConverter();
+			return new PDFBoxConverter(config.getPdfboxConfig());
 		}
 
 		if (PDF2PDFOCRConverter.CODE.equals(strategy) && PDF2PDFOCRConverter.isContentSupported(contentType)) {

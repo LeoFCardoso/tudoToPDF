@@ -19,7 +19,7 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -36,6 +36,7 @@ import br.nom.leonardo.tudotopdf.job.JobStatus;
 import br.nom.leonardo.tudotopdf.job.PdfConversionJob;
 import br.nom.leonardo.tudotopdf.model.ConversionConfiguration;
 import br.nom.leonardo.tudotopdf.model.Pdf2pdfocrConfiguration;
+import br.nom.leonardo.tudotopdf.model.PdfboxConfiguration;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverter;
 import br.nom.leonardo.tudotopdf.pdf.PDFConverterFactory;
 
@@ -214,27 +215,27 @@ public class ConvertFileServlet extends HttpServlet {
 				|| !StringUtils.isNumeric(request.getParameter("transparency")) ? 50
 						: Integer.parseInt(request.getParameter("transparency"));
 		log.debug("Transparency: " + transparency);
-		
+
 		String wmColor = StringUtils.isBlank(request.getParameter("watermarkColor")) ? "lightGray"
 				: request.getParameter("watermarkColor");
 		log.debug("Watermark color: " + wmColor);
-		Field field = Color.class.getField(wmColor); 
+		Field field = Color.class.getField(wmColor);
 		Color waterkMarkColor = (Color) field.get(null);
 
+		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? "" : request.getParameter("strategy");
+
 		Pdf2pdfocrConfiguration pdf2pdfocrConfig = null;
-		String strategy = StringUtils.isBlank(request.getParameter("strategy")) ? ""
-				: request.getParameter("strategy");
 		if ("PDF2PDFOCR".equals(strategy)) {
 			pdf2pdfocrConfig = new Pdf2pdfocrConfiguration();
-			
+
 			boolean flagT = "on".equals(request.getParameter("pdf2pdfocr_flag_t"));
 			log.debug("PDF2PDFOcr - flag T: " + flagT);
 			pdf2pdfocrConfig.setFlagT(flagT);
-			
+
 			boolean flagA = "on".equals(request.getParameter("pdf2pdfocr_flag_a"));
 			log.debug("PDF2PDFOcr - flag A: " + flagA);
 			pdf2pdfocrConfig.setFlagA(flagA);
-			
+
 			boolean flagF = "on".equals(request.getParameter("pdf2pdfocr_flag_f"));
 			log.debug("PDF2PDFOcr - flag F: " + flagF);
 			pdf2pdfocrConfig.setFlagF(flagF);
@@ -243,16 +244,16 @@ public class ConvertFileServlet extends HttpServlet {
 					: request.getParameter("pdf2pdfocr_flag_g_value");
 			log.debug("PDF2PDFOcr - flag G Value: " + flagGValue);
 			pdf2pdfocrConfig.setFlagGValue(flagGValue);
-			
+
 			boolean flagD = "on".equals(request.getParameter("pdf2pdfocr_flag_d"));
 			log.debug("PDF2PDFOcr - flag D: " + flagD);
 			pdf2pdfocrConfig.setFlagD(flagD);
-			
+
 			String flagDValue = StringUtils.isBlank(request.getParameter("pdf2pdfocr_flag_d_value")) ? ""
 					: request.getParameter("pdf2pdfocr_flag_d_value");
 			log.debug("PDF2PDFOcr - flag D Value: " + flagDValue);
 			pdf2pdfocrConfig.setFlagDValue(flagDValue);
-			
+
 			boolean flagP = "on".equals(request.getParameter("pdf2pdfocr_flag_p"));
 			log.debug("PDF2PDFOcr - flag P: " + flagP);
 			pdf2pdfocrConfig.setFlagP(flagP);
@@ -261,7 +262,7 @@ public class ConvertFileServlet extends HttpServlet {
 					: request.getParameter("pdf2pdfocr_flag_r_value");
 			log.debug("PDF2PDFOcr - flag R Value: " + flagRValue);
 			pdf2pdfocrConfig.setFlagRValue(flagRValue);
-			
+
 			boolean flagU = "on".equals(request.getParameter("pdf2pdfocr_flag_u"));
 			log.debug("PDF2PDFOcr - flag U: " + flagU);
 			pdf2pdfocrConfig.setFlagU(flagU);
@@ -270,13 +271,33 @@ public class ConvertFileServlet extends HttpServlet {
 					: request.getParameter("pdf2pdfocr_flag_e_value");
 			log.debug("PDF2PDFOcr - flag E Value: " + flagEValue);
 			pdf2pdfocrConfig.setFlagEValue(flagEValue);
-			
+
 		}
-		
+
+		PdfboxConfiguration pdfboxConfig = null;
+		if ("PDFBox".equals(strategy)) {
+			pdfboxConfig = new PdfboxConfiguration();
+
+			String pagesizeValue = StringUtils.isBlank(request.getParameter("pdfbox_pagesize_value")) ? ""
+					: request.getParameter("pdfbox_pagesize_value");
+			log.debug("PDFBox - page size Value: " + pagesizeValue);
+			pdfboxConfig.setPageSize(pagesizeValue);
+
+			String widthValue = StringUtils.isBlank(request.getParameter("pdfbox_width_value")) ? ""
+					: request.getParameter("pdfbox_width_value");
+			log.debug("PDFBox - width Value: " + widthValue);
+			pdfboxConfig.setWidthCm(widthValue);
+
+			String heightValue = StringUtils.isBlank(request.getParameter("pdfbox_height_value")) ? ""
+					: request.getParameter("pdfbox_height_value");
+			log.debug("PDFBox - height Value: " + heightValue);
+			pdfboxConfig.setHeightCm(heightValue);
+		}
+
 		ConversionConfiguration config = new ConversionConfiguration(isWatermarked, isProtected, textHeader, textTop,
 				textMiddle, textBottom, textFooter, sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter,
-				transparency, waterkMarkType, waterkMarkColor, pdf2pdfocrConfig);
-		
+				transparency, waterkMarkType, waterkMarkColor, pdf2pdfocrConfig, pdfboxConfig);
+
 		return config;
 	}
 

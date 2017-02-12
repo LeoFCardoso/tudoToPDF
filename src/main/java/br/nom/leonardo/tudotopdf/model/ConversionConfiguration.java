@@ -17,6 +17,7 @@ public class ConversionConfiguration implements Serializable {
 	private static final long serialVersionUID = -352432106072559106L;
 
 	private Pdf2pdfocrConfiguration pdf2pdfocrConfig;
+	private PdfboxConfiguration pdfboxConfig;
 	private boolean protect;
 	private int sizeHeader, sizeTop, sizeMiddle, sizeBottom, sizeFooter;
 	private String textHeader, textTop, textMiddle, textBottom, textFooter;
@@ -31,7 +32,7 @@ public class ConversionConfiguration implements Serializable {
 	public ConversionConfiguration(boolean watermark, boolean protect, String textHeader, String textTop,
 			String textMiddle, String textBottom, String textFooter, int sizeHeader, int sizeTop, int sizeMiddle,
 			int sizeBottom, int sizeFooter, int transparency, String waterkMarkType, Color waterkMarkColor,
-			Pdf2pdfocrConfiguration pdf2pdfocrConfig) {
+			Pdf2pdfocrConfiguration pdf2pdfocrConfig, PdfboxConfiguration pdfboxConfig) {
 		super();
 		this.watermark = watermark;
 		this.protect = protect;
@@ -49,6 +50,7 @@ public class ConversionConfiguration implements Serializable {
 		this.waterMarkType = waterkMarkType;
 		this.waterMarkColor = waterkMarkColor;
 		this.pdf2pdfocrConfig = pdf2pdfocrConfig;
+		this.pdfboxConfig = pdfboxConfig;
 	}
 
 	public Pdf2pdfocrConfiguration getPdf2pdfocrConfig() {
@@ -127,6 +129,7 @@ public class ConversionConfiguration implements Serializable {
 		result = prime * result + ((waterMarkType == null) ? 0 : waterMarkType.hashCode());
 		result = prime * result + (watermark ? 1231 : 1237);
 		result = prime * result + ((pdf2pdfocrConfig == null) ? 0 : pdf2pdfocrConfig.hashCode());
+		result = prime * result + ((pdfboxConfig == null) ? 0 : pdfboxConfig.hashCode());
 		return result;
 	}
 
@@ -202,4 +205,12 @@ public class ConversionConfiguration implements Serializable {
 		this.waterMarkType = waterMarkType;
 	}
 
+	public PdfboxConfiguration getPdfboxConfig() {
+		return pdfboxConfig;
+	}
+
+	public void setPdfboxConfig(PdfboxConfiguration pdfboxConfig) {
+		this.pdfboxConfig = pdfboxConfig;
+	}
+		
 }
