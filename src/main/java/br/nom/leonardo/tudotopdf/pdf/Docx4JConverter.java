@@ -18,7 +18,7 @@ import br.nom.leonardo.tudotopdf.config.Config;
  * 
  * @author leonardo
  */
-public class Docx4JConverter implements PDFConverter {
+public class Docx4JConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(Docx4JConverter.class);
 
@@ -28,7 +28,6 @@ public class Docx4JConverter implements PDFConverter {
 	public String getCode() {
 		return CODE;
 	}
-
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOCX"),
 			Config.getString("mime.PPTX"), Config.getString("mime.XLSX") });
@@ -50,7 +49,7 @@ public class Docx4JConverter implements PDFConverter {
 			WordprocessingMLPackage wordMLPckg = Docx4J.load(theFile);
 			FOSettings foSettings = Docx4J.createFOSettings();
 			foSettings.setWmlPackage(wordMLPckg);
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			FileOutputStream pdfStream = new FileOutputStream(outputFile);
 			Docx4J.toFO(foSettings, pdfStream, Docx4J.FLAG_EXPORT_PREFER_XSL);

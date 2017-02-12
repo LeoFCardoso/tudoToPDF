@@ -23,4 +23,9 @@ public class NoConverter implements PDFConverter {
 		}
 	}
 
+	@Override
+	public String getOutputFileName(String md5UploadedFile) {
+		return "";
+	}
+
 }

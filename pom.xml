@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tudoToPDF</groupId>
 	<artifactId>tudoToPDF</artifactId>
-	<version>0.6.2-SNAPSHOT</version>
+	<version>0.6.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>tudoToPDF web project</name>
 	<description>This is tudoToPDF web project</description>

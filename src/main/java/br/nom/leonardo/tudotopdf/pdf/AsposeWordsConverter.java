@@ -12,7 +12,7 @@ import com.aspose.words.Document;
 
 import br.nom.leonardo.tudotopdf.config.Config;
 
-public class AsposeWordsConverter implements PDFConverter {
+public class AsposeWordsConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(AsposeWordsConverter.class);
 
@@ -44,7 +44,7 @@ public class AsposeWordsConverter implements PDFConverter {
 			// TEST ONLY!
 			// License license = new License();
 			// license.setLicense("");
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 			Document doc = new Document(new FileInputStream(theFile));
 			doc.save(pdfOutput.getCanonicalPath());

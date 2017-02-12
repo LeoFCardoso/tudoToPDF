@@ -14,7 +14,7 @@ import br.nom.leonardo.tudotopdf.config.Config;
  * 
  * @author leonardo
  */
-public abstract class FilePollingConverter implements PDFConverter {
+public abstract class FilePollingConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(FilePollingConverter.class);
 
@@ -61,7 +61,7 @@ public abstract class FilePollingConverter implements PDFConverter {
 			}
 
 			// This must be the returned file
-			String outFileName = md5UploadedFile + "-" + getCode() + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			FileUtils.copyFile(pdfFileFinal, outputFile);
 			return outputFile;

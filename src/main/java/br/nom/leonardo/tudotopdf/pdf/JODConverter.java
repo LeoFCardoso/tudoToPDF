@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import br.nom.leonardo.tudotopdf.config.Config;
 import br.nom.leonardo.tudotopdf.servlet.AppContext;
 
-public class JODConverter implements PDFConverter {
+public class JODConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(JODConverter.class);
 
@@ -43,7 +43,7 @@ public class JODConverter implements PDFConverter {
 	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
 			OfficeDocumentConverter converter = new OfficeDocumentConverter(AppContext.getOfficeManager());
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 			converter.convert(theFile, pdfOutput);
 			return pdfOutput;

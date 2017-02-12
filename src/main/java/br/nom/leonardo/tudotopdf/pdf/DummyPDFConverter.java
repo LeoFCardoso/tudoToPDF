@@ -18,7 +18,7 @@ import br.nom.leonardo.tudotopdf.config.Config;
  * @author leonardo
  *
  */
-public class DummyPDFConverter implements PDFConverter {
+public class DummyPDFConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(DummyPDFConverter.class);
 
@@ -43,7 +43,7 @@ public class DummyPDFConverter implements PDFConverter {
 			contentStream.showText("This is a test PDF file.");
 			contentStream.endText();
 			contentStream.close();
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			document.save(outputFile);
 			document.close();

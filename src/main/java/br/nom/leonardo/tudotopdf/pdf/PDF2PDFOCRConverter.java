@@ -20,9 +20,8 @@ import br.nom.leonardo.tudotopdf.model.Pdf2pdfocrConfiguration;
  * Convert using PDF2PDFOCR script Results in searchable PDF's.
  * 
  * @author leonardo
- *
  */
-public class PDF2PDFOCRConverter implements PDFConverter {
+public class PDF2PDFOCRConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(PDF2PDFOCRConverter.class);
 
@@ -53,6 +52,14 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 		return PDFConverterFactory.supportedExtensions(SUPPORTED_MIMES);
 	}
 
+	/* (non-Javadoc)
+	 * @see br.nom.leonardo.tudotopdf.pdf.AbstractPDFConverter#getOutFileNameSuffix()
+	 */
+	@Override
+	String getOutFileNameSuffix() {
+		return "" + pdf2pdfocrConfig.hashCode();
+	}
+
 	@Override
 	public File convertPDF(File theFile, String md5UploadedFile) throws PDFConverterException {
 		try {
@@ -60,8 +67,8 @@ public class PDF2PDFOCRConverter implements PDFConverter {
 			// Call pdf2pdfocr.py script
 			// https://github.com/LeoFCardoso/pdf2pdfocr
 
-			// This will be the output file from script. TODO - remove hardcode and introduce a parameter
-			String outFileName = md5UploadedFile + "-" + CODE + "-" + pdf2pdfocrConfig.hashCode() + ".pdf";
+			// This will be the output file from script.
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 
 			File pdfOutput = new File(Config.getString("application.staticFiles"), outFileName);
 

@@ -30,7 +30,7 @@ import br.nom.leonardo.tudotopdf.model.PdfboxConfiguration;
  * @author leonardo
  *
  */
-public class PDFBoxConverter implements PDFConverter {
+public class PDFBoxConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(PDFBoxConverter.class);
 
@@ -60,6 +60,11 @@ public class PDFBoxConverter implements PDFConverter {
 	 */
 	public static List<String> supportedExtensions() {
 		return PDFConverterFactory.supportedExtensions(SUPPORTED_MIMES);
+	}
+
+	@Override
+	String getOutFileNameSuffix() {
+		return "" + pdfboxConfig.hashCode();
 	}
 
 	@Override
@@ -177,7 +182,7 @@ public class PDFBoxConverter implements PDFConverter {
 				log.debug("Page {} from image generated in PDF", i + 1);
 			}
 
-			String outFileName = md5UploadedFile + "-" + CODE + "-" + pdfboxConfig.hashCode() + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			doc.save(outputFile);

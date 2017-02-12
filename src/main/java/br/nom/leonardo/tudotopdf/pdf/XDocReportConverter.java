@@ -21,7 +21,7 @@ import br.nom.leonardo.tudotopdf.config.Config;
  * @author leonardo
  *
  */
-public class XDocReportConverter implements PDFConverter {
+public class XDocReportConverter extends AbstractPDFConverter {
 
 	private Logger log = LoggerFactory.getLogger(XDocReportConverter.class);
 
@@ -31,7 +31,6 @@ public class XDocReportConverter implements PDFConverter {
 	public String getCode() {
 		return CODE;
 	}
-
 
 	private static final List<String> SUPPORTED_MIMES = Arrays.asList(new String[] { Config.getString("mime.DOCX") });
 
@@ -52,7 +51,7 @@ public class XDocReportConverter implements PDFConverter {
 			InputStream is = new FileInputStream(theFile);
 			XWPFDocument document = new XWPFDocument(is);
 			PdfOptions options = PdfOptions.create();
-			String outFileName = md5UploadedFile + "-" + CODE + ".pdf";
+			String outFileName = this.getOutputFileName(md5UploadedFile);
 			File outputFile = new File(Config.getString("application.staticFiles"), outFileName);
 			FileOutputStream pdfStream = new FileOutputStream(outputFile);
 			PdfConverter.getInstance().convert(document, pdfStream, options);
